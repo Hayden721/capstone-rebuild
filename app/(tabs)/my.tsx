@@ -11,16 +11,16 @@ import { ArrowLeft, ArrowRight } from '@tamagui/lucide-icons';
 
 
 // '/'에 해당하는 파일
-export default function home() {
-const theme = useTheme();
+export default function my() {
+const theme = useTheme;
 
-  return (
-    <View flex={1} backgroundColor="$color1">
-      <YStack>
-        <XStack>
-          <Button theme="accent">테마 테스트</Button>
-        </XStack>
-      </YStack>
+    return (
+    <View flex={1} backgroundColor="$background">
+        <YStack>
+            <XStack>
+            <Button theme="accent">테마 테스트</Button>
+            </XStack>
+        </YStack>
     </View>
-  );
+    );
 }

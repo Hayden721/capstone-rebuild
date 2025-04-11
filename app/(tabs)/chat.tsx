@@ -6,19 +6,17 @@ import {
   useTheme} from 'tamagui';
 // import { View, styled } from '@tamagui/core';
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight } from '@tamagui/lucide-icons';
 
 
 
-// '/'에 해당하는 파일
-export default function home() {
-const theme = useTheme();
+export default function chat() {
+const theme = useTheme;
 
   return (
-    <View flex={1} backgroundColor="$color1">
+    <View flex={1} backgroundColor="$background">
       <YStack>
         <XStack>
-          <Button theme="accent">테마 테스트</Button>
+          <Text>chat</Text>
         </XStack>
       </YStack>
     </View>

@@ -1,45 +1,57 @@
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
+import { Code, Home, Clipboard, AlertCircle, MessageCircle, User } from '@tamagui/lucide-icons' // Tamagui용 아이콘
+import { useTheme } from 'tamagui';
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+
+// 하단 탭 레이아웃
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const theme = useTheme();
 
+  // const backgroundColor = theme.background?.val ?? '#fff'
+  // const textColor = theme.color12?.val ?? '#000'
+  // const activeTint = theme.accent?.val ?? 'hsla(104, 24%, 43%, 1)'
+// expo-router 사용 시 '/'에 해당하는 파일을 지정하기 위해 index.tsx 사용한다.
+// 사용하지 않을 시 +not-found.tsx 스크린으로 이동된다.
   return (
     <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
-      }}>
+    screenOptions={{
+      tabBarActiveTintColor: theme.accent1?.val,
+      tabBarStyle: {
+        backgroundColor: theme.color1?.val,
+        borderTopWidth: 0,
+        
+      },
+      headerStyle: {
+        backgroundColor: theme.color1?.val,
+        borderBottomWidth: 0,
+        elevation: 0, // 안드로이드 그림자 제거
+        shadowOpacity: 0, // iOS 그림자 제거
+      },
+      headerTitleStyle: {
+        color: theme.color12?.val,
+      },
+      headerTintColor: theme.color12?.val,
+      
+    }}
+      >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: '홈',
+          headerTitle: 'home',
+          tabBarIcon: ({ color }) => <Home size={24} color={color}/>,
           headerRight: () => (
             <Link href="/modal" asChild>
-              <Pressable>
+              <Pressable style={{ marginRight: 10}}>
                 {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  <AlertCircle
+                    size={24}
+                    color={theme.color12?.val}
+                    style={{ opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
               </Pressable>
@@ -48,12 +60,47 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="board"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: '게시판',
+          headerTitle: 'board',
+          tabBarIcon: ({ color }) => <Clipboard size={24} color={color}/>,
+          headerShown: false,
         }}
       />
+      
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: '채팅',
+          headerTitle: 'board',
+          tabBarIcon: ({ color }) => <MessageCircle size={24} color={color}/>
+        }}
+      />
+
+      <Tabs.Screen
+        name="my"
+        options={{
+          title: 'MY',
+          headerTitle: '',
+          tabBarIcon: ({color}) => <User size={24} color={color}/>,
+          headerRight: () => (
+            <Link href="/modal" asChild>
+              <Pressable style={{ marginRight: 10}}>
+                {({ pressed }) => (
+                  <AlertCircle
+                    size={24}
+                    color={theme.color12?.val ?? '#000'}
+                    style={{ opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+          
+        }}
+      />
+
     </Tabs>
   );
 }
