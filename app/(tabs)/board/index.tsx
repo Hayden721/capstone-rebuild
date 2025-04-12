@@ -23,7 +23,5 @@ export default function index() {
   );
 }
 
-export const options = {
-  title: '직업'
-}
+
 

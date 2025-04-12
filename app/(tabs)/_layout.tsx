@@ -4,16 +4,11 @@ import { Pressable } from 'react-native';
 import { Code, Home, Clipboard, AlertCircle, MessageCircle, User } from '@tamagui/lucide-icons' // Tamagui용 아이콘
 import { useTheme } from 'tamagui';
 
-
-
 // 하단 탭 레이아웃
 
 export default function TabLayout() {
   const theme = useTheme();
 
-  // const backgroundColor = theme.background?.val ?? '#fff'
-  // const textColor = theme.color12?.val ?? '#000'
-  // const activeTint = theme.accent?.val ?? 'hsla(104, 24%, 43%, 1)'
 // expo-router 사용 시 '/'에 해당하는 파일을 지정하기 위해 index.tsx 사용한다.
 // 사용하지 않을 시 +not-found.tsx 스크린으로 이동된다.
   return (
@@ -23,7 +18,7 @@ export default function TabLayout() {
       tabBarStyle: {
         backgroundColor: theme.color1?.val,
         borderTopWidth: 0,
-        
+
       },
       headerStyle: {
         backgroundColor: theme.color1?.val,

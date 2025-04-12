@@ -7,6 +7,7 @@ import {
 // import { View, styled } from '@tamagui/core';
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight } from '@tamagui/lucide-icons';
+import { router } from 'expo-router';
 
 
 
@@ -18,7 +19,7 @@ const theme = useTheme();
     <View flex={1} backgroundColor="$color1">
       <YStack>
         <XStack>
-          <Button theme="accent">테마 테스트</Button>
+          <Button theme="accent" onPress={() => router.push('/auth/login')}>테마 테스트</Button>
         </XStack>
       </YStack>
     </View>

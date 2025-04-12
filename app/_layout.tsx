@@ -1,6 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Redirect, Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -8,7 +8,7 @@ import { TamaguiProvider } from '@tamagui/core'
 import { config } from '../tamagui.config';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native'
-import { useTheme } from 'tamagui';
+import { useAuth } from '../hooks/useAuth';
 // root 레이아웃 (App.jsx 대용)
 
 export {
@@ -43,7 +43,7 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    return null; // 폰트가 로딩 중이면 아무것도 렌더링 하지 않음
   }
   
   
@@ -51,7 +51,15 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  
+  const { user, loading } = useAuth(); // useAuth 훅 사용
+  const router = useRouter(); // useRouter 훅 사용
+
+  if(loading) return null // 로딩 중이면 렌더링 하지 않음
+
+  if(!user){ // 로그인이 되어 있지 않으면 로그인 스크린으로 이동
+    return <Redirect href="/auth/login"/>; 
+  }
+
   return (
     <SafeAreaProvider>
     <TamaguiProvider config={config} defaultTheme="light">
@@ -61,13 +69,6 @@ function RootLayoutNav() {
       </Stack>
     </TamaguiProvider>
     </SafeAreaProvider>
-  );
+  )
 }
 
-// function StatusLayout() {
-//   const theme = useTheme();
-//   return     <StatusBar
-//   backgroundColor={theme.color12?.val} // Android 전용
-//   barStyle="dark-content" // iOS 글자 색 (light-content or dark-content)
-// />
-// }
