@@ -6,19 +6,21 @@ import {
   useTheme, Input} from 'tamagui';
 // import { View, styled } from '@tamagui/core';
 import { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+ 
 
 
-
-
-export default function login() {
+export default function register() {
 const theme = useTheme;
 
   return (
-    <YStack f={1} jc="center" ai="center" px="$4" gap="$4">
-      <Text fontSize="$8" fontWeight="bold">로그인</Text>
-      <Input placeholder="이메일" width={250} />
-      <Input placeholder="비밀번호" width={250} secureTextEntry />
+    <SafeAreaView>
+    <YStack flex={1} jc="center" ai="center" px="$4" gap="$4" >
+      <Text fontSize="$8" fontWeight="bold">회원가입</Text>
+      <Input placeholder="이메일" />
+      <Input placeholder="비밀번호" secureTextEntry />
       <Button width={250}>로그인</Button>
     </YStack>
+    </SafeAreaView>
   );
 }

@@ -1,14 +1,17 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { Redirect, Stack, useRouter } from 'expo-router';
+import { Redirect, Slot, Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { TamaguiProvider } from '@tamagui/core'
 import { config } from '../tamagui.config';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StatusBar } from 'react-native'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar, useColorScheme } from 'react-native'
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from 'tamagui';
+import { ThemeProvider, useThemeContext } from '../context/ThemeContext';
+
 // root 레이아웃 (App.jsx 대용)
 
 export {
@@ -47,28 +50,57 @@ export default function RootLayout() {
   }
   
   
-  return <RootLayoutNav />;
+  return (
+    <ThemeProvider>
+      <RootLayoutNav />
+    </ThemeProvider>
+);
 }
 
 function RootLayoutNav() {
   const { user, loading } = useAuth(); // useAuth 훅 사용
-  const router = useRouter(); // useRouter 훅 사용
-
+  const { theme } = useThemeContext();
+  
+  // useEffect(() => {
+  //   if(loading && !user) {
+  //     router.push('/(auth)/login');
+  //   }
+  // })
   if(loading) return null // 로딩 중이면 렌더링 하지 않음
 
-  if(!user){ // 로그인이 되어 있지 않으면 로그인 스크린으로 이동
-    return <Redirect href="/auth/login"/>; 
-  }
 
+// 삼항 연산자를 사용해서 로그인 상태에 따라 네이베이션 호출
   return (
     <SafeAreaProvider>
-    <TamaguiProvider config={config} defaultTheme="light">
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </TamaguiProvider>
+      <TamaguiProvider config={config} defaultTheme={theme}>
+        <StatusBar
+          barStyle={theme === 'light' ? 'light-content' : 'dark-content'}
+          backgroundColor="transparent"
+          translucent
+        />
+        
+        {!user ? (
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+          </Stack>
+          ) : (
+          <Stack>
+            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
+          </Stack>
+        )}      
+
+          {/* <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+          </Stack> */}
+          {/* <Stack>
+            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
+          </Stack> */}
+        
+      </TamaguiProvider>
     </SafeAreaProvider>
   )
 }
+
 

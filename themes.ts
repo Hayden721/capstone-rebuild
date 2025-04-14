@@ -1,8 +1,8 @@
 import { createThemes, defaultComponentThemes } from '@tamagui/theme-builder'
 import * as Colors from '@tamagui/colors'
 
-const darkPalette = ['hsla(0, 17%, 1%, 1)','hsla(0, 17%, 10%, 1)','hsla(0, 17%, 19%, 1)','hsla(0, 17%, 29%, 1)','hsla(0, 17%, 38%, 1)','hsla(0, 17%, 47%, 1)','hsla(0, 17%, 56%, 1)','hsla(0, 17%, 66%, 1)','hsla(0, 17%, 75%, 1)','hsla(0, 17%, 84%, 1)','hsla(0, 15%, 93%, 1)','hsla(0, 15%, 99%, 1)']
-const lightPalette = ['hsla(0, 17%, 99%, 1)','hsla(0, 17%, 94%, 1)','hsla(0, 17%, 88%, 1)','hsla(0, 17%, 83%, 1)','hsla(0, 17%, 77%, 1)','hsla(0, 17%, 72%, 1)','hsla(0, 17%, 66%, 1)','hsla(0, 17%, 61%, 1)','hsla(0, 17%, 55%, 1)','hsla(0, 17%, 50%, 1)','hsla(0, 15%, 15%, 1)','hsla(0, 15%, 1%, 1)']
+const darkPalette = ['hsla(0, 7%, 1%, 1)','hsla(0, 7%, 6%, 1)','hsla(0, 7%, 12%, 1)','hsla(0, 7%, 17%, 1)','hsla(0, 7%, 23%, 1)','hsla(0, 7%, 28%, 1)','hsla(0, 7%, 34%, 1)','hsla(0, 7%, 39%, 1)','hsla(0, 7%, 45%, 1)','hsla(0, 7%, 50%, 1)','hsla(0, 15%, 93%, 1)','hsla(0, 15%, 99%, 1)']
+const lightPalette = ['hsla(0, 7%, 97%, 1)','hsla(0, 7%, 92%, 1)','hsla(0, 7%, 87%, 1)','hsla(0, 7%, 81%, 1)','hsla(0, 7%, 76%, 1)','hsla(0, 7%, 71%, 1)','hsla(0, 7%, 66%, 1)','hsla(0, 7%, 60%, 1)','hsla(0, 7%, 55%, 1)','hsla(0, 7%, 50%, 1)','hsla(0, 15%, 15%, 1)','hsla(0, 15%, 1%, 1)']
 
 const lightShadows = {
   shadow1: 'rgba(0,0,0,0.04)',
@@ -26,7 +26,7 @@ const darkShadows = {
 
 const builtThemes = createThemes({
   componentThemes: defaultComponentThemes,
-  
+
   base: {
     palette: {
       dark: darkPalette,
@@ -49,13 +49,12 @@ const builtThemes = createThemes({
         shadowColor: darkShadows.shadow1,
       },
     },
-    
   },
 
   accent: {
     palette: {
-      dark: ['hsla(104, 24%, 35%, 1)','hsla(104, 24%, 38%, 1)','hsla(104, 24%, 41%, 1)','hsla(104, 24%, 43%, 1)','hsla(104, 24%, 46%, 1)','hsla(104, 24%, 49%, 1)','hsla(104, 24%, 52%, 1)','hsla(104, 24%, 54%, 1)','hsla(104, 24%, 57%, 1)','hsla(104, 24%, 60%, 1)','hsla(250, 50%, 90%, 1)','hsla(250, 50%, 95%, 1)'],
-      light: ['hsla(104, 24%, 55%, 1)','hsla(104, 24%, 56%, 1)','hsla(104, 24%, 57%, 1)','hsla(104, 24%, 58%, 1)','hsla(104, 24%, 59%, 1)','hsla(104, 24%, 61%, 1)','hsla(104, 24%, 62%, 1)','hsla(104, 24%, 63%, 1)','hsla(104, 24%, 64%, 1)','hsla(104, 24%, 65%, 1)','hsla(250, 50%, 95%, 1)','hsla(250, 50%, 95%, 1)'],
+      dark: ['hsla(256, 26%, 35%, 1)','hsla(256, 26%, 38%, 1)','hsla(256, 26%, 41%, 1)','hsla(256, 26%, 43%, 1)','hsla(256, 26%, 46%, 1)','hsla(256, 26%, 49%, 1)','hsla(256, 26%, 52%, 1)','hsla(256, 26%, 54%, 1)','hsla(256, 26%, 57%, 1)','hsla(256, 26%, 60%, 1)','hsla(250, 50%, 90%, 1)','hsla(250, 50%, 95%, 1)'],
+      light: ['hsla(256, 26%, 60%, 1)','hsla(256, 26%, 61%, 1)','hsla(256, 26%, 61%, 1)','hsla(256, 26%, 62%, 1)','hsla(256, 26%, 62%, 1)','hsla(256, 26%, 63%, 1)','hsla(256, 26%, 63%, 1)','hsla(256, 26%, 64%, 1)','hsla(256, 26%, 64%, 1)','hsla(256, 26%, 65%, 1)','hsla(250, 50%, 95%, 1)','hsla(250, 50%, 95%, 1)'],
     },
   },
 

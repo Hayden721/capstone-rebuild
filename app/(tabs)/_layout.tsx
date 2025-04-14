@@ -7,7 +7,7 @@ import { useTheme } from 'tamagui';
 // 하단 탭 레이아웃
 
 export default function TabLayout() {
-  const theme = useTheme();
+  const theme = useTheme();  
 
 // expo-router 사용 시 '/'에 해당하는 파일을 지정하기 위해 index.tsx 사용한다.
 // 사용하지 않을 시 +not-found.tsx 스크린으로 이동된다.
