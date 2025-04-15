@@ -4,6 +4,7 @@ import { Pressable } from 'react-native';
 import { Code, Home, Clipboard, AlertCircle, MessageCircle, User } from '@tamagui/lucide-icons' // Tamagui용 아이콘
 import { useTheme } from 'tamagui';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderBackButton } from '../../node_modules/@react-navigation/elements/lib/module/Header/HeaderBackButton';
 
 
 // auth layout
@@ -16,7 +17,15 @@ export default function AuthLayout() {
     <SafeAreaView style={{flex: 1, backgroundColor: theme.color1?.val}}  edges={['top']}>
     <Stack>
       <Stack.Screen name='login' options={{headerShown: false}}/>
-      <Stack.Screen name='register' options={{headerShown: false}}/>
+      <Stack.Screen name='register' options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: theme.color1?.val,
+          },
+          headerShadowVisible: false,
+          title: ''
+        }}
+        />
     </Stack>
     </SafeAreaView>
   );

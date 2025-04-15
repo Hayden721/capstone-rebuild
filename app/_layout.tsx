@@ -10,7 +10,9 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar, useColorScheme } from 'react-native'
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from 'tamagui';
-import { ThemeProvider, useThemeContext } from '../context/ThemeContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
+import { useThemeContext } from '../hooks/useThemeContext';
+import { AuthProvider } from '../contexts/AuthContext';
 
 // root 레이아웃 (App.jsx 대용)
 
@@ -51,53 +53,40 @@ export default function RootLayout() {
   
   
   return (
-    <ThemeProvider>
-      <RootLayoutNav />
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <RootLayoutNav />
+      </ThemeProvider>
+    </AuthProvider>
 );
 }
 
 function RootLayoutNav() {
   const { user, loading } = useAuth(); // useAuth 훅 사용
-  const { theme } = useThemeContext();
+  const { themeMode } = useThemeContext();
   
-  // useEffect(() => {
-  //   if(loading && !user) {
-  //     router.push('/(auth)/login');
-  //   }
-  // })
   if(loading) return null // 로딩 중이면 렌더링 하지 않음
-
 
 // 삼항 연산자를 사용해서 로그인 상태에 따라 네이베이션 호출
   return (
     <SafeAreaProvider>
-      <TamaguiProvider config={config} defaultTheme={theme}>
+      <TamaguiProvider config={config} defaultTheme={themeMode}>
         <StatusBar
-          barStyle={theme === 'light' ? 'light-content' : 'dark-content'}
+          barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}
           backgroundColor="transparent"
           translucent
         />
         
         {!user ? (
           <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
           </Stack>
           ) : (
           <Stack>
-            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-          </Stack>
-        )}      
-
-          {/* <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-          </Stack> */}
-          {/* <Stack>
-            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-          </Stack> */}
-        
+          </Stack>
+        )}
       </TamaguiProvider>
     </SafeAreaProvider>
   )

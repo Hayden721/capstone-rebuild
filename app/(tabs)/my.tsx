@@ -18,7 +18,7 @@ const theme = useTheme;
     <View flex={1} backgroundColor="$background">
         <YStack>
             <XStack>
-            <Button theme="accent">테마 테스트</Button>
+            
             </XStack>
         </YStack>
     </View>

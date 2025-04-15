@@ -25,7 +25,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 
-// firebase Auth 로그인 상태를 AsyncStorage에 저장
+
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),  
 });
