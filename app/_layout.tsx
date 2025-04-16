@@ -16,77 +16,69 @@ import { AuthProvider } from '../contexts/AuthContext';
 
 // root 레이아웃 (App.jsx 대용)
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  // 폰트 적용
+  
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+  
 
   if (!loaded) {
-    return null; // 폰트가 로딩 중이면 아무것도 렌더링 하지 않음
+    return null;
   }
-  
-  
+  if (error) throw error;
   return (
-    <AuthProvider>
+    <AuthProvider >
       <ThemeProvider>
-        <RootLayoutNav />
+        <RootLayoutNav loaded={loaded} />
       </ThemeProvider>
     </AuthProvider>
-);
+  );
 }
 
-function RootLayoutNav() {
-  const { user, loading } = useAuth(); // useAuth 훅 사용
+function RootLayoutNav({ loaded }: { loaded: boolean }) {
+  const { user, loading } = useAuth();
   const { themeMode } = useThemeContext();
+  console.log("로그인 상태 : ", user);
   
-  if(loading) return null // 로딩 중이면 렌더링 하지 않음
+  useEffect(() => {
+    if (loaded && !loading) {
+      SplashScreen.hideAsync(); // 모든 준비 끝난 후 Splash 숨김
+    }
+  }, [loaded, loading]);
 
-// 삼항 연산자를 사용해서 로그인 상태에 따라 네이베이션 호출
+
+  if (loading || !loaded) return null;
+
   return (
     <SafeAreaProvider>
       <TamaguiProvider config={config} defaultTheme={themeMode}>
         <StatusBar
           barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}
-          backgroundColor="transparent"
           translucent
+          backgroundColor="transparent"
         />
-        
-        {!user ? (
-          <Stack>
-            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-          </Stack>
-          ) : (
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-          </Stack>
-        )}
+        {user ? 
+          <Redirect href="/(tabs)"/>
+        :
+          <Redirect href="/(auth)"/>  
+        }
+
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        </Stack>
       </TamaguiProvider>
     </SafeAreaProvider>
   )

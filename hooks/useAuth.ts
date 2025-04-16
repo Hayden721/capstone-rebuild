@@ -1,6 +1,3 @@
-
-// firebase 인증 
-
 import { AuthContext, AuthContextType } from "../contexts/AuthContext";
 import { useContext } from "react";
 

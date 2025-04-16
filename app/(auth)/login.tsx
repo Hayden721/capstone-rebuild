@@ -19,7 +19,9 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const user = await firebaseLogin(email, password);
+
       console.log("로그인 성공", user.email);
+      router.replace('/(tabs)');
 
     } catch (error) {
       Alert.alert("로그인 실패", error.message);

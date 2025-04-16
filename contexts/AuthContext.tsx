@@ -20,18 +20,29 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if(user) {
-        setUser(user);
-        await AsyncStorage.setItem('user', JSON.stringify(user));
-      } else {
+      console.log('> onAuthStateChanged triggered');
+      try {
+        if (user) {
+          console.log("> 로그인 상태", user.email);
+          setUser(user);
+          await AsyncStorage.setItem('user', JSON.stringify(user));
+        } else {
+          console.log("? 로그인 안 된 상태");
+          setUser(null);
+          await AsyncStorage.removeItem('user');
+        }
+      } catch (e) {
+        console.error("> 오류 발생:", e);
         setUser(null);
         await AsyncStorage.removeItem('user');
+      } finally {
+        console.log('> Auth loading end');
+        setLoading(false);
       }
-      setLoading(false);
-    })
-
+    });
+  
     return () => unsubscribe();
-  }, [])
+  }, []);
 
   return (
     <AuthContext.Provider value={{user, loading}}>
