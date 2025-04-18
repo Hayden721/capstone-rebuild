@@ -7,7 +7,7 @@ import {
 // import { View, styled } from '@tamagui/core';
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight } from '@tamagui/lucide-icons';
-import { firebaseLogout } from '../../services/authService';
+import { firebaseLogout } from '../../../services/authService';
 import { useRouter } from 'expo-router';
 
 
@@ -20,7 +20,6 @@ const router = useRouter();
 //로그아웃
 const handleFirebaseLogout = async () => {
     firebaseLogout();
-    router.replace('/(auth)/login');
 }
 
     return (

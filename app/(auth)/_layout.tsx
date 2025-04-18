@@ -5,8 +5,6 @@ import { Code, Home, Clipboard, AlertCircle, MessageCircle, User } from '@tamagu
 import { useTheme } from 'tamagui';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
-
 // auth layout
 
 export default function AuthLayout() {
@@ -15,8 +13,7 @@ export default function AuthLayout() {
 // 스크린에 오류 발생 시 +not-found.tsx 스크린으로 이동된다.
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: theme.color1?.val}}  edges={['top']}>
-    <Stack>
-      <Stack.Screen name='index' options={{headerShown: false}}/>
+    <Stack >
       <Stack.Screen name='login' options={{headerShown: false}}/>
       <Stack.Screen name='register' options={{
           headerShown: true,

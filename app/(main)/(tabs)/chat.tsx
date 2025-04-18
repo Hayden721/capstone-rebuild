@@ -6,22 +6,17 @@ import {
   useTheme} from 'tamagui';
 // import { View, styled } from '@tamagui/core';
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight } from '@tamagui/lucide-icons';
-import { router } from 'expo-router';
-import { ThemeToggleButton } from '@/components/ThemeToggle';
 
 
 
-// '/'에 해당하는 파일
-export default function home() {
+export default function chat() {
 const theme = useTheme();
 
   return (
-    <View flex={1} backgroundColor="$color1">
+    <View flex={1} backgroundColor="$background">
       <YStack>
         <XStack>
-          <Button theme="accent" onPress={() => router.push('/(auth)/register')}><Text>회원가입</Text></Button>
-          <ThemeToggleButton/>
+          <Text>chat</Text>
         </XStack>
       </YStack>
     </View>

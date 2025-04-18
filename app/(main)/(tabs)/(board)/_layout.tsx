@@ -14,7 +14,6 @@ export default function TopTabLayout() {
     // SafeAreaView edges: 적용할 부분
     <SafeAreaView style={{flex: 1, backgroundColor: theme.color1?.val}}  edges={['top']}>
     <TopTabs
-    
       screenOptions={({ route }) => ({
         tabBarScrollEnabled: true, // 탭이 많을 때 스크롤 가능 여부
         // 탭 바 스타일 설정
@@ -42,7 +41,7 @@ export default function TopTabLayout() {
         tabBarActiveTintColor: theme.color12?.val, // 선택 탭 글자색
         tabBarInactiveTintColor: '#ccc', // 비선택 탭 글자색
         tabBarLabel:
-          route.name === 'index' ? '자유'
+          route.name === 'index' ? '게시판'
           : route.name === 'job' ? '직업 정보'
           : route.name,
     })}

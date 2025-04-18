@@ -55,7 +55,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="board"
+        name="(board)"
         options={{
           title: '게시판',
           headerTitle: 'board',

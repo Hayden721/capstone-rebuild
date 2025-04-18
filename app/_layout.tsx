@@ -14,7 +14,7 @@ import { ThemeProvider } from '../contexts/ThemeContext';
 import { useThemeContext } from '../hooks/useThemeContext';
 import { AuthProvider } from '../contexts/AuthContext';
 
-// root 레이아웃 (App.jsx 대용)
+// root 레이아웃 (최상위 레이아웃)
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -26,13 +26,12 @@ export {
 
 
 export default function RootLayout() {
-  
+  // 폰트 로딩
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
   
-
   if (!loaded) {
     return null;
   }
@@ -47,8 +46,9 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav({ loaded }: { loaded: boolean }) {
-  const { user, loading } = useAuth();
-  const { themeMode } = useThemeContext();
+  const { user, loading } = useAuth(); // 로그인 상태
+  const { themeMode } = useThemeContext(); // 테마 상태 
+  const router = useRouter();
   console.log("로그인 상태 : ", user);
   
   useEffect(() => {
@@ -57,8 +57,17 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
     }
   }, [loaded, loading]);
 
+  useEffect(() => {
+    if(!loading && loaded) {
+      if(user) {
+        router.replace('/(main)/(tabs)/(board)');
+      }else {
+        router.replace('/(auth)/login')
+      }
+    }
+  }, [user, loaded, loading])
 
-  if (loading || !loaded) return null;
+  if (loading || !loaded) return null; // 로딩이 되지 않았으면 렌더링 하지 않는다.
 
   return (
     <SafeAreaProvider>
@@ -68,17 +77,13 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           translucent
           backgroundColor="transparent"
         />
-        {user ? 
-          <Redirect href="/(tabs)"/>
-        :
-          <Redirect href="/(auth)"/>  
-        }
 
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="(auth)"/>
+          <Stack.Screen name="(main)"/>
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
         </Stack>
+
       </TamaguiProvider>
     </SafeAreaProvider>
   )
