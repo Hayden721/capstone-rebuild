@@ -3,6 +3,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { useTheme } from 'tamagui';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+// 게시판 상단 탭 레이아웃 설정
 
 const { Navigator } = createMaterialTopTabNavigator();
 const TopTabs = withLayoutContext(Navigator);
@@ -44,6 +45,7 @@ export default function TopTabLayout() {
           route.name === 'index' ? '게시판'
           : route.name === 'job' ? '직업 정보'
           : route.name,
+        
     })}
   />
   </SafeAreaView>

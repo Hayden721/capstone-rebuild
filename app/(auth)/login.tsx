@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { ThemeToggleButton } from '@/components/ThemeToggle';
 import { useThemeContext } from '../../hooks/useThemeContext';
 import { useRouter } from 'expo-router';
-import {firebaseLogin} from '../../services/authService';
+import {firebaseLogin} from '../../firebase/auth';
 
 export default function Login() {
   const {themeMode} = useThemeContext();
@@ -21,7 +21,7 @@ export default function Login() {
       const user = await firebaseLogin(email, password);
 
       console.log("로그인 성공", user.email);
-      router.replace('/(tabs)');
+      router.replace('/(main)/(tabs)');
 
     } catch (error) {
       Alert.alert("로그인 실패", error.message);

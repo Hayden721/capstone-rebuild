@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getReactNativePersistence, initializeAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -31,5 +32,7 @@ const auth = initializeAuth(app, {
 });
 
 const db = getFirestore(app); // Firebase firestroe(DB)사용
+const storage = getStorage(app); // Firebase storage 사용 (이미지 저장 등 )
 
-export { auth, db } ;
+
+export { auth, db, storage } ;

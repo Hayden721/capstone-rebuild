@@ -4,7 +4,9 @@ import { ComponentType } from "react";
 import { Pressable } from "react-native";
 import { Button, Text, XStack } from "tamagui";
 
-type screenPath = `/(main)/${string}`  | `/(stack)/major/${string}`;
+// 게시판 리스트
+
+type screenPath = `/(main)/major/${string}` | `/(main)/${string}`;
 
 interface BoardListProps {
   label: string;

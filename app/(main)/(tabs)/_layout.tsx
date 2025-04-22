@@ -1,28 +1,28 @@
 import React from 'react';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
-import { Code, Home, Clipboard, AlertCircle, MessageCircle, User } from '@tamagui/lucide-icons' // Tamagui용 아이콘
+import { Home, Clipboard, AlertCircle, MessageCircle, User } from '@tamagui/lucide-icons' // Tamagui용 아이콘
 import { useTheme } from 'tamagui';
 
 // 하단 탭 레이아웃
 
-export default function TabLayout() {
+export default function BottomTabLayout() {
   const theme = useTheme();  
 
-// expo-router 사용 시 '/'에 해당하는 파일을 지정하기 위해 index.tsx 사용한다.
-// 사용하지 않을 시 +not-found.tsx 스크린으로 이동된다.
+// (tabs)의 레이아웃, 스택 설정
+// 오류 발생 시 +not-found.tsx 스크린으로 이동된다.
   return (
+    
     <Tabs
     screenOptions={{
-      tabBarActiveTintColor: theme.accent1?.val,
+      tabBarActiveTintColor: theme.accent1?.val, 
       tabBarStyle: {
         backgroundColor: theme.color1?.val,
         borderTopWidth: 0,
-
       },
       headerStyle: {
-        backgroundColor: theme.color1?.val,
-        borderBottomWidth: 0,
+        backgroundColor: theme.color1?.val,  // 헤더 배경 색상 
+        borderBottomWidth: 0, // 헤덜 바텀
         elevation: 0, // 안드로이드 그림자 제거
         shadowOpacity: 0, // iOS 그림자 제거
       },
@@ -30,9 +30,10 @@ export default function TabLayout() {
         color: theme.color12?.val,
       },
       headerTintColor: theme.color12?.val,
-      
+      title: '',
     }}
       >
+      {/* NOTI : index.tsx(main)  */}
       <Tabs.Screen
         name="index"
         options={{
@@ -54,6 +55,7 @@ export default function TabLayout() {
           ),
         }}
       />
+      {/* NOTI : 게시판 상단 탭 */}
       <Tabs.Screen
         name="(board)"
         options={{
@@ -63,7 +65,7 @@ export default function TabLayout() {
           headerShown: false,
         }}
       />
-      
+      {/* NOTI : 채팅 */}
       <Tabs.Screen
         name="chat"
         options={{
@@ -72,7 +74,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <MessageCircle size={24} color={color}/>
         }}
       />
-
+      {/* NOTI : 마이페이지 */}
       <Tabs.Screen
         name="my"
         options={{

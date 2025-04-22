@@ -10,8 +10,6 @@ import { ArrowLeft, ArrowRight } from '@tamagui/lucide-icons';
 import { router } from 'expo-router';
 import { ThemeToggleButton } from '@/components/ThemeToggle';
 
-
-
 // '/'에 해당하는 파일
 export default function home() {
 const theme = useTheme();
@@ -20,7 +18,7 @@ const theme = useTheme();
     <View flex={1} backgroundColor={theme.color1?.val}>
       <YStack>
         <XStack>
-          <Button theme="accent" onPress={() => router.push('/(auth)/register')}><Text>회원가입</Text></Button>
+        
           <ThemeToggleButton/>
         </XStack>
       </YStack>

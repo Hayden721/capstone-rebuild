@@ -28,7 +28,7 @@ export {
 export default function RootLayout() {
   // 폰트 로딩
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('../assets/fonts/NotoSansKR-Medium.ttf'),
     ...FontAwesome.font,
   });
   
@@ -60,9 +60,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   useEffect(() => {
     if(!loading && loaded) {
       if(user) {
-        router.replace('/(main)/(tabs)/(board)');
+        router.replace('/(main)/(tabs)/(board)'); // 로그인 상태면 메인 스크린으로 이동
       }else {
-        router.replace('/(auth)/login')
+        router.replace('/(auth)/login') // 로그인 상태 아니면 로그인 스크린으로 이동
       }
     }
   }, [user, loaded, loading])
@@ -78,10 +78,15 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           backgroundColor="transparent"
         />
 
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)"/>
-          <Stack.Screen name="(main)"/>
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack screenOptions={{ 
+          headerShown: false,
+          animation: 'default',
+          
+          }}
+        >
+          <Stack.Screen name="(auth)"/> 
+          <Stack.Screen name="(main)"/>  
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> 
         </Stack>
 
       </TamaguiProvider>

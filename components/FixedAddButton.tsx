@@ -11,8 +11,8 @@ const FixedAddButton: React.FC = () => {
   return (
   <Button 
     position="absolute" 
-    bottom={30} 
-    right={30} 
+    bottom={20} 
+    right={20} 
     width={60}
     height={60}
     borderRadius={30}

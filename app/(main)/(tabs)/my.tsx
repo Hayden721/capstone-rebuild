@@ -7,7 +7,7 @@ import {
 // import { View, styled } from '@tamagui/core';
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight } from '@tamagui/lucide-icons';
-import { firebaseLogout } from '../../../services/authService';
+import { firebaseLogout } from '../../../firebase/auth';
 import { useRouter } from 'expo-router';
 
 

@@ -1,16 +1,19 @@
 import { router, Stack } from "expo-router";
 import { TouchableOpacity, Pressable } from "react-native";
 import { Text, Button, useTheme} from "tamagui";
-import { ArrowLeft } from '@tamagui/lucide-icons';
+import { ArrowLeft, ChevronLeft } from '@tamagui/lucide-icons';
 import majorTitleMap from '@/constants/majorTitleMap';
+import { name } from '../../node_modules/ci-info/index.d';
 
 
-//
+
+
+// (main) layout / 바텀탭 레이아웃
 export default function ListLayout() {
-    const theme = useTheme();
-
+  const theme = useTheme();
+  
   return (
-    //
+
     <Stack screenOptions={{
       headerShown: false,
       headerStyle: {
@@ -20,21 +23,26 @@ export default function ListLayout() {
       headerTitleStyle: {
         fontWeight: 'bold', 
       },
+      headerBackButtonDisplayMode: 'minimal'
+      
     }}
     >
-  
+    {/* NOTI: 게시판 목록 */}
+    <Stack.Screen 
+      name="(tabs)"
+      options={{
+        title: '목록'
+      }}
+    />
+    
     <Stack.Screen
       name="myPosts"
       options={{
         title: '내가 쓴 게시글',
         headerShown: true,
-        // headerLeft: () => (
-        //   <Pressable onPress={() => router.back()}>
-        //     <ArrowLeft size={24} color={theme.color12?.val}/>
-        //   </Pressable>
-        // ),
       }}
     />
+
     <Stack.Screen 
       name="myComments" 
       options={{
@@ -46,32 +54,39 @@ export default function ListLayout() {
         ),
       }}
     />
-// 전공별 게시판 스택
-<Stack.Screen
-  name="major/[major]"
-  options={({ route }) => {
-    const { major } = route.params as {major: string};
 
-    return {
-      title: `${majorTitleMap[major] ?? major} 게시판`,
-      // headerLeft: () => (
-      //   <Pressable onPress={() => router.back()}>
-      //     <ArrowLeft size={24} color={theme.color12?.val}/>
-      //   </Pressable>
-      // ),
-      headerShown: true
-    }
+    {/* 전공별 게시판 스택 */} 
+    <Stack.Screen
+      name="major/[major]"
+      options={({ route }) => {
+        const { major } = route.params as {major: string};
+
+        return {
+          headerShown: true,
+          title: `${majorTitleMap[major] ?? major} 게시판`,
+        }
+        
+      }}
+    />
+    {/* NOTI: 글작성  */}
+    <Stack.Screen 
+      name="major/[major]/write"
+      options={{
+        headerShown: true,
+        headerBackTitle: '',
+        title: '글쓰기',
+      }}
+    />
+    {/* NOTI: 게시글목록 */}
+    <Stack.Screen 
+      name="post/[id]"
+      options={{
+        headerShown: true,
+        headerBackTitle: '',
+        title: '',
+      }}
+    />
     
-  }}
-/>
-<Stack.Screen 
-  name="major/[major]/write" 
-  options={{
-    headerShown: true,
-  }}
-/>
-
-
   </Stack>
   )
 }
