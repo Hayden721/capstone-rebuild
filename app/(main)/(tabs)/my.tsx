@@ -4,7 +4,7 @@ import {
   Separator, Label, RadioGroup, Paragraph, 
   Theme, AnimatePresence, Image, styled, View, 
   useTheme} from 'tamagui';
-// import { View, styled } from '@tamagui/core';
+
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight } from '@tamagui/lucide-icons';
 import { firebaseLogout } from '../../../firebase/auth';
@@ -21,8 +21,7 @@ const router = useRouter();
 const handleFirebaseLogout = async () => {
     firebaseLogout();
 }
-
-    return (
+return (
     <View flex={1} backgroundColor="$background">
         <YStack>
             <XStack>
@@ -30,5 +29,5 @@ const handleFirebaseLogout = async () => {
             </XStack>
         </YStack>
     </View>
-    );
+);
 }
