@@ -77,9 +77,9 @@ export default function ListLayout() {
         title: '글쓰기',
       }}
     />
-    {/* NOTI: 게시글목록 */}
+    {/* NOTI: 게시글 상세 */}
     <Stack.Screen 
-      name="post/[id]"
+      name="major/[major]/[postId]"
       options={{
         headerShown: true,
         headerBackTitle: '',

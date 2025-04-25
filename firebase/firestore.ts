@@ -1,16 +1,16 @@
 import {
   collection, addDoc, Timestamp, query, orderBy, getDocs, 
-  startAfter,limit, QueryDocumentSnapshot, DocumentData 
+  startAfter,limit, QueryDocumentSnapshot, DocumentData, doc, getDoc
   } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { fetchPostProps } from '@/type/firebaseType';
+import { postProps } from '@/type/firebaseType';
 
 
 let lastVisible: QueryDocumentSnapshot<DocumentData> | null = null;
 
 
 // 게시글 업로드
-export const uploadPostToFirestore = async({title, content, imageUrls, major, userId}: fetchPostProps) => {
+export const uploadPostToFirestore = async({title, content, imageUrls, major, userId}: postProps) => {
   const docRef = await addDoc(collection(db, major), {
     title, // 제목 
     content, // 내용
@@ -52,4 +52,26 @@ export const fetchPosts = async (major: string, reset: boolean=false, pageSize: 
 // 리스트를 초기화 할 때 사용 (새로고침 등)
 export const resetPagination = () => {
   lastVisible = null;
+}
+
+// 게시글 상세 조회
+export const getDetailPost = async (major: string, postId: string) => {
+  const docRef = doc(db, major, postId);
+  const docSnap = await getDoc(docRef);
+  console.log("docSnap.exists()", docSnap.exists());
+  console.log("docSnap.data()", docSnap.data());
+  if(docSnap.exists()) {
+    const data = docSnap.data();
+    return {
+      id: docSnap.id, 
+      title: data.title,
+      content: data.content,
+      imageUrls: data.imageUrls,
+      major: data.major,
+      userId: data.userId,
+      createdAt: data.createdAt.toDate(),
+    };
+  } else {
+    throw new Error('게시글을 찾을 수 없습니다.');
+  }
 }

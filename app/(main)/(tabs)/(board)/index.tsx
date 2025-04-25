@@ -9,7 +9,7 @@ import { Pressable } from 'react-native';
 import Divider from '@/components/Divider';
 import { Link, useRouter } from 'expo-router';
 import BoardList from '@/components/BoardList';
-import { BookText, Code2, CircuitBoard } from '@tamagui/lucide-icons';
+import { BookText, Code2, CircuitBoard, Lightbulb } from '@tamagui/lucide-icons';
 
 // 상단탭의 메인페이지 (게시판 리스트 )
 
@@ -30,7 +30,7 @@ const router = useRouter(); // expo-router 사용
 
         <YStack>
         <BoardList label='자유게시판' screen="/(main)/free" icon={BookText}/>
-        <BoardList label='정보게시판' screen="/(main)/info" icon={BookText}/>
+        <BoardList label='정보게시판' screen="/(main)/info" icon={Lightbulb}/>
         </YStack>
 
         <Divider/>

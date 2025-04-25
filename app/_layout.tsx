@@ -1,8 +1,8 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { Redirect, Slot, Stack, useRouter } from 'expo-router';
+import { Redirect, Slot, Stack, useRouter, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { TamaguiProvider } from '@tamagui/core'
 import { config } from '../tamagui.config';
@@ -50,12 +50,41 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   const { themeMode } = useThemeContext(); // 테마 상태 
   const router = useRouter();
   console.log("로그인 상태 : ", user);
+  const pathname = usePathname();
+  console.log(pathname);
+
+  // 개발할 떄만 사용 (스크린 고정할 때 사용)
+  const [isLayoutMounted, setIsLayoutMounted] = useState(false);
+    // 컴포넌트 마운트 완료 감지
+    useEffect(() => {
+      if (loaded && !loading) {
+        SplashScreen.hideAsync(); // 모든 준비 끝난 후 Splash 숨김
+        // 마운트 완료 표시를 약간 지연
+        return setIsLayoutMounted(true);
+      }
+    }, [loaded, loading]);
   
-  useEffect(() => {
-    if (loaded && !loading) {
-      SplashScreen.hideAsync(); // 모든 준비 끝난 후 Splash 숨김
-    }
-  }, [loaded, loading]);
+    // 마운트 완료 후에만 경로 리디렉션 실행
+    useEffect(() => {
+      if (__DEV__ && isLayoutMounted) {
+        // 안전한 시점에서 리디렉션
+        const redirectTimer = setTimeout(() => {
+          if (pathname !== '/major/com/ivTalbdY0B5YucotCOzV') {
+            console.log('Redirecting to development screen...');
+            router.replace('/major/com/ivTalbdY0B5YucotCOzV');
+          }
+        }, 300);
+        
+        return () => clearTimeout(redirectTimer);
+      }
+    }, [pathname, isLayoutMounted]);
+
+  // 배포할 때 사용 
+  // useEffect(() => {
+  //   if (loaded && !loading) {
+  //     SplashScreen.hideAsync(); // 모든 준비 끝난 후 Splash 숨김
+  //   }
+  // }, [loaded, loading]);
 
   useEffect(() => {
     if(!loading && loaded) {
@@ -66,7 +95,7 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
       }
     }
   }, [user, loaded, loading])
-
+  // 배포할 때 사용  -------------------------
   if (loading || !loaded) return null; // 로딩이 되지 않았으면 렌더링 하지 않는다.
 
   return (

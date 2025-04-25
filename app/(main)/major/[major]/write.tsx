@@ -47,8 +47,8 @@ const handleSubmit = async () => {
     major,
     userId: auth.currentUser?.email ?? 'anonymous',
   })
-
-  router.replace(`/(main)/post/${newPostId}`);
+  // 게시글 작성을 완료하면 내가 작성한 게시글로 이동
+  router.replace(`/major/${major}/${newPostId}`);
 };
 
 const confirmSubmit = () => {

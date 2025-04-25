@@ -87,7 +87,7 @@ useFocusEffect(
           alwaysBounceVertical={true}
           renderItem={({item}) => (
           <View borderBottomWidth={0.5} borderColor={"#999"} > 
-          <TouchableOpacity onPress={() => router.push(`/post/${item.id}`)}>
+          <TouchableOpacity onPress={() => router.push(`/major/${major}/${item.id}`)}>
             <View padding={10} borderColor="beige" flexDirection='row' justifyContent='space-between'>
               <View>
                 <Text fontSize={19}>{item.title}</Text>

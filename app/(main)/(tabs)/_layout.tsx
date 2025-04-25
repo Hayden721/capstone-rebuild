@@ -31,14 +31,18 @@ export default function BottomTabLayout() {
       },
       headerTintColor: theme.color12?.val,
       title: '',
+      animation: 'shift',
+
+
     }}
       >
       {/* NOTI : index.tsx(main)  */}
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: '홈',
           headerTitle: 'home',
+          
           tabBarIcon: ({ color }) => <Home size={24} color={color}/>,
           headerRight: () => (
             <Link href="/modal" asChild>
