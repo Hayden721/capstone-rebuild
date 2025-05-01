@@ -16,12 +16,7 @@ export default function AuthLayout() {
     <Stack >
       <Stack.Screen name='login' options={{headerShown: false}}/>
       <Stack.Screen name='register' options={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: theme.color1?.val,
-          },
-          headerShadowVisible: false,
-          title: ''
+          headerShown: false,
         }}
         />
     </Stack>

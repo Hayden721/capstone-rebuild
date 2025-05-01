@@ -31,7 +31,7 @@ export default function BottomTabLayout() {
       },
       headerTintColor: theme.color12?.val,
       title: '',
-      animation: 'shift',
+      animation: 'none',
 
 
     }}

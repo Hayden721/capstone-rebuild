@@ -13,7 +13,7 @@ import { useTheme } from 'tamagui';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { useThemeContext } from '../hooks/useThemeContext';
 import { AuthProvider } from '../contexts/AuthContext';
-
+import { PortalProvider } from '@tamagui/portal';
 // root 레이아웃 (최상위 레이아웃)
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -69,11 +69,14 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
       if (__DEV__ && isLayoutMounted) {
         // 안전한 시점에서 리디렉션
         const redirectTimer = setTimeout(() => {
-          if (pathname !== '/major/com/ivTalbdY0B5YucotCOzV') {
-            console.log('Redirecting to development screen...');
-            router.replace('/major/com/ivTalbdY0B5YucotCOzV');
+          // if (pathname !== '/major/com/ivTalbdY0B5YucotCOzV') {
+          //   console.log('Redirecting to development screen...');
+          //   router.replace('/major/com/ivTalbdY0B5YucotCOzV');
+          // }
+          if(pathname !== '/register') {
+            router.replace('/(auth)/register');
           }
-        }, 300);
+        }, 100);
         
         return () => clearTimeout(redirectTimer);
       }
@@ -101,23 +104,23 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   return (
     <SafeAreaProvider>
       <TamaguiProvider config={config} defaultTheme={themeMode}>
-        <StatusBar
-          barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}
-          translucent
-          backgroundColor="transparent"
-        />
+        <PortalProvider>
+          <StatusBar
+            barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}
+            translucent
+            backgroundColor="transparent"
+          />
 
-        <Stack screenOptions={{ 
-          headerShown: false,
-          animation: 'default',
-          
-          }}
-        >
-          <Stack.Screen name="(auth)"/> 
-          <Stack.Screen name="(main)"/>  
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> 
-        </Stack>
-
+          <Stack screenOptions={{ 
+            headerShown: false,
+            animation: 'default',
+            }}
+          >
+            <Stack.Screen name="(auth)"/> 
+            <Stack.Screen name="(main)"/>  
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> 
+          </Stack>
+        </PortalProvider>
       </TamaguiProvider>
     </SafeAreaProvider>
   )

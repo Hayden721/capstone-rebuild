@@ -1,4 +1,4 @@
-import { StyleSheet, Alert } from 'react-native';
+import { StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { 
   YStack, XStack, Text, Card, Button, 
   Separator, Label, Theme, AnimatePresence, Image, styled, View, useTheme, Input, Form} from 'tamagui';
@@ -8,6 +8,7 @@ import { ThemeToggleButton } from '@/components/ThemeToggle';
 import { useThemeContext } from '../../hooks/useThemeContext';
 import { useRouter } from 'expo-router';
 import {firebaseLogin} from '../../firebase/auth';
+
 
 export default function Login() {
   const {themeMode} = useThemeContext();
@@ -19,15 +20,12 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const user = await firebaseLogin(email, password);
-
       console.log("로그인 성공", user.email);
-      router.replace('/(main)/(tabs)');
+      router.replace('/(main)/(tabs)/home');
 
     } catch (error) {
       Alert.alert("로그인 실패", error.message);
-      
     }
-
   }
 
   return (
@@ -47,19 +45,18 @@ export default function Login() {
         
         <YStack width={300}> 
           <YStack>
-            <Label fontWeight="600" fontSize="$5" htmlFor='email' asChild>
+            <Label fontWeight="600" fontSize="$5" htmlFor='email'>
               <Text>이메일</Text>
-            </Label>
+            </Label>  
             <Input id='email' value={email} onChangeText={setEmail} placeholder='Email' backgroundColor={theme.color1?.val} height={50} fontSize="$4" fontWeight="400"/>
           </YStack>
 
           <YStack>
-            <Label fontWeight="600" fontSize="$5" htmlFor='password' asChild>
+            <Label fontWeight="600" fontSize="$5" htmlFor='password'>
               <Text>비밀번호</Text>
             </Label>
-            <Input id='password' value={password} onChangeText={setPassword} placeholder='Password' backgroundColor={theme.color1?.val}     
-              height={50} fontSize="$4" fontWeight="400"
-              secureTextEntry/>
+              <Input id='password' value={password} onChangeText={setPassword} placeholder='Password' backgroundColor={theme.color1?.val}     
+                height={50} fontSize="$4" fontWeight="400" secureTextEntry/>
           </YStack>
 
           <YStack marginTop={10}>
@@ -83,16 +80,10 @@ export default function Login() {
     아이디 | 비밀번호 찾기
   </Text>
 
-  <Text
-    fontWeight="500"
-    fontSize="$5"
-    color="$color"
-    onPress={() => {
-      router.push('/(auth)/register');
-    }}
-  >
-    회원가입
-  </Text>
+  <TouchableOpacity
+    onPress={() => {router.push('/(auth)/register')}}>
+    <Text style={{fontWeight: 600, fontSize: 16, color: theme.color12?.val}}>회원가입</Text>
+  </TouchableOpacity>
 </XStack>
           </YStack>
       </YStack>

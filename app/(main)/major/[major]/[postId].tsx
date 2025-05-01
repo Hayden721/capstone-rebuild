@@ -1,101 +1,165 @@
-import { Alert, StyleSheet, TouchableOpacity, KeyboardAvoidingView, 
-  Platform, TouchableWithoutFeedback, Keyboard} from 'react-native';
-import { 
-  YStack, XStack, Text, Card, Button, H5,
-  Separator, Theme, AnimatePresence, Image, styled, View, 
-  useTheme, ScrollView,
-  H6, Group} from 'tamagui';
-
-import { useEffect, useState } from 'react';
-import { Pressable } from 'react-native';
+import BackScreenButton from '@/components/BackScreenButton';
 import Divider from '@/components/Divider';
-import { Link, useLocalSearchParams, useRouter } from 'expo-router';
-import BoardList from '@/components/BoardList';
-import { BookText } from '@tamagui/lucide-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { getDetailPost } from '@/firebase/firestore';
-import { postProps } from '@/type/firebaseType';
+import { PostDropDownMenu } from '@/components/PostDropDownMenu';
+import { getDetailPost, addComment, getComments } from '@/firebase/firestore';
+import { useAuth } from '@/hooks/useAuth';
+import { getCommentProps, postProps } from '@/type/firebaseType';
+import { Bookmark, MessageCircle, Send, ThumbsUp, X } from '@tamagui/lucide-icons';
 import { format } from 'date-fns';
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import {
+  Keyboard, KeyboardAvoidingView,Platform, TouchableOpacity, TouchableWithoutFeedback, 
+  Text, View, ScrollView, FlatList
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  H6, Image, Input, useTheme, XStack, YStack
+} from 'tamagui';
 
 export default function detail() {
 const theme = useTheme();
 const router = useRouter();
 const { major, postId } = useLocalSearchParams<{major: string, postId: string}>();
+const [postDetail, setPostDetail] = useState<postProps | null>(null); //게시글 상세 정보
+const [comment, setComment] = useState<string>(''); // 
+const storageAuth = useAuth(); // asyncStroage에 저장된 로그인 정보
+const userId = storageAuth.user?.email;
+const [comments, setComments] = useState<getCommentProps[]>([]); // 댓글 배열
+const [commentsLoading, setCommentsLoading] = useState(true);
 
-const [postDetail, setPostDetail] = useState<postProps | null>(null);
-
-console.log("detail major, id test : ", major, postId);
-
-useEffect(() => {
-  if (!__DEV__) {
-    router.replace(`/major/${major}/${postId}`);
-  }
-}, []); // ✅ 개발 중일 땐 이동 막음
-
+// 게시글 상세 조회
 useEffect(() => {
   const fetchPost = async () => {
     const post = await getDetailPost(major, postId);
     setPostDetail(post);
     console.log("가져온 게시물 데이터 : ", post);
   }
-
   fetchPost();
 }, [major, postId]);
 
-  return (
-    <KeyboardAvoidingView 
-        style={{ flex: 1, backgroundColor: theme.color1?.val }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={90}>
+// 댓글 조회
+useEffect(() => {
+  
+  fetchComments();
+}, [major, postId]);
+
+// 댓글 조회
+const fetchComments = async () => {
+  try{
+    const fetched = await getComments({major, postId});
+    setComments(fetched);
+  } catch (error) {
+    console.log("comment get error : ", error);
+  } finally {
+    setCommentsLoading(false);
+  }
+}
+
+
+// 댓글 달기
+const handleSubmitComment = () => {
+  if(!userId) {
+    console.warn("로그인을 해야 댓글 작성이 가능합니다.");
+    return  
+  }
+  if(!comment.trim()) {
+    console.log("댓글을 입력하세요");
+    return
+  }
+  addComment({major, postId, comment, userId});
+  console.log("댓글 : ", comment);
+  setComment('');
+  fetchComments();
+}
+
+return (
+  <SafeAreaView style={{ flex: 1, backgroundColor: theme.color1?.val }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: theme.color1?.val }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={10}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    
-    <ScrollView contentContainerStyle={{flexGrow:1, padding:10}}
-    backgroundColor={theme.color1?.val} flex={1}
-    style={{ maxHeight: '100%', flex: 1 }}
-    >
-      {/* <Text>{postId} 상세페이지</Text> */}
-      <YStack>
-      {/* 작성자 영역 */}
-      <YStack>
-        <XStack>
-          <Image source={require('@/assets/images/Chill_guy.jpg')}
-            width={50} height={50} borderRadius={10}
+        <View style={{ flex: 1 }}>
+          {/* 커스텀 헤더 (고정) */}
+          <XStack height={50} justifyContent='space-between' alignItems='center' backgroundColor={theme.accent1?.val}>
+            <BackScreenButton/>
+            <PostDropDownMenu major={major} postId= {postId}/>
+          </XStack>
+
+          <FlatList // 댓글 목록 (스크롤 가능)
+            data={comments}
+            contentContainerStyle={{padding: 10}}
+            renderItem={({ item }) => (
+              <View style={{ paddingVertical: 10, backgroundColor: theme.accent1?.val }}>
+                <Text>{item.content}</Text>
+                <Text>{item.createdAt instanceof Date
+                  ? format(item.createdAt, 'yyyy.MM.dd HH:mm')
+                  : '날짜 없음'}</Text>
+              </View>
+            )}
+            keyExtractor={(item) => item.commentId}
+            style={{ flex: 1 }} // FlatList가 남은 공간을 차지하도록 설정
+            ListHeaderComponent={() => ( // 게시글 상세 정보를 FlatList의 헤더로 이동
+              <YStack padding={10}>
+                {/* 작성자 영역 */}
+                <YStack>
+                  <XStack>
+                    <Image source={require('@/assets/images/Chill_guy.jpg')}
+                      width={50} height={50} borderRadius={10}/>
+                    <YStack marginLeft={5}>
+                      <Text fontSize={16}>{postDetail?.userId}</Text>
+                      <Text>{postDetail?.createdAt ? format(postDetail.createdAt, 'yyyy.MM.dd hh:MM'): ''}</Text>
+                    </YStack>
+                  </XStack>
+                </YStack>
+
+                {/* 글 내용 */}
+                <YStack marginTop={8} >
+                  <H6 fontWeight={500}>{postDetail?.title}</H6>
+                  <Text fontSize={17} fontWeight={400}>{postDetail?.content}</Text>
+                </YStack>
+
+                {/* 버튼 모음 */}
+                <YStack>
+                  <XStack justifyContent='flex-end'>
+                    <TouchableOpacity style={{marginRight: 8, display:"flex", flexDirection:"row", alignItems:"center"}} >
+                      <ThumbsUp marginRight={3} />
+                      <Text fontSize={19}>1</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Bookmark/>
+                    </TouchableOpacity>
+                  </XStack>
+                </YStack>
+                <Divider/>
+              </YStack>
+            )}
           />
-          <YStack marginLeft={5}>
-          <Text>{postDetail?.userId}</Text>
-          <Text>{postDetail?.createdAt ? format(postDetail.createdAt, 'yyyy.MM.dd'): ''}</Text>
-          </YStack>
-        </XStack>
-      </YStack>
 
-      <YStack>
-        <H6>{postDetail?.title}</H6>
-        <Text>{postDetail?.content}</Text>
-      </YStack>
-      <Group orientation="horizontal" width={400}>
-        <Group.Item>
-          <Button>First</Button>
-        </Group.Item>
-        <Group.Item>
-          <Button>Second</Button>
-        </Group.Item>
-        <Group.Item>
-          <Button>Third</Button>
-        </Group.Item>
-        </Group>
-      <YStack>
-
-      </YStack>
-      {/* 글 내용 영역 */}
-
-      {/* 댓글 영역 */}
-
-      </YStack>
-    </ScrollView>
-
-    </TouchableWithoutFeedback>
-
+          {/* 댓글 입력창 (고정) */}
+          <View style={{ paddingLeft:10, paddingRight:10, backgroundColor: theme.color1?.val }}>
+            <XStack alignItems="center">
+              <Input
+                value={comment}
+                onChangeText={setComment}
+                placeholder={"댓글을 입력하세요"}
+                marginRight={10}
+                multiline
+                style={{ flex:1, fontSize: 15, backgroundColor:theme.color2?.val, maxHeight:90,
+                  textAlignVertical: 'top',
+                  paddingVertical: 10,}}
+                />
+              <TouchableOpacity
+                onPress={handleSubmitComment}>
+                  <Send/>
+              </TouchableOpacity>
+            </XStack>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
+  </SafeAreaView>
   );
 }
 

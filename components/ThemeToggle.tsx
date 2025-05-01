@@ -6,7 +6,7 @@ export function ThemeToggleButton() {
   const {toggleTheme, themeMode} = useThemeContext();
 
   return (
-    <Button onPress={toggleTheme}>
+    <Button onPress={toggleTheme} style={{width: 100}}>
       <Text>{themeMode}</Text>
     </Button>
   )

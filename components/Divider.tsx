@@ -1,5 +1,5 @@
-import { View } from "tamagui"
-import { StyleSheet } from "react-native"
+
+import { View, StyleSheet } from "react-native"
 
 const Divider: React.FC = () => {
   return <View style={Style.divider}/>

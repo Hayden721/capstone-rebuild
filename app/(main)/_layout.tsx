@@ -1,9 +1,15 @@
-import { router, Stack } from "expo-router";
-import { TouchableOpacity, Pressable } from "react-native";
-import { Text, Button, useTheme} from "tamagui";
-import { ArrowLeft, ChevronLeft } from '@tamagui/lucide-icons';
+import { router, Stack, useLocalSearchParams } from "expo-router";
+import { TouchableOpacity, Pressable, Button, TouchableWithoutFeedback, View } from "react-native";
+import { Text, useTheme, Popover, YStack} from "tamagui";
+import { ArrowLeft, ChevronLeft, AlignJustify, EllipsisVertical
+} from '@tamagui/lucide-icons';
+
 import majorTitleMap from '@/constants/majorTitleMap';
-import { name } from '../../node_modules/ci-info/index.d';
+import { useState } from "react";
+import PostDropDownMenu from "@/components/PostDropDownMenu";
+
+
+
 
 
 
@@ -79,13 +85,13 @@ export default function ListLayout() {
     />
     {/* NOTI: 게시글 상세 */}
     <Stack.Screen 
-      name="major/[major]/[postId]"
-      options={{
-        headerShown: true,
-        headerBackTitle: '',
-        title: '',
-      }}
-    />
+  name="major/[major]/[postId]"
+  options={{
+    headerShown: false,
+    headerBackTitle: '',
+    title: '',
+  }}
+/>
     
   </Stack>
   )
