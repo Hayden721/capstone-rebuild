@@ -1,15 +1,16 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { TamaguiProvider, Theme } from '@tamagui/core';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
+import tamaguiConfig from '../tamagui.config';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
+    InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   });
 
   if (!loaded) {
@@ -18,12 +19,14 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <TamaguiProvider config={tamaguiConfig} defaultTheme={'light'}>
+      
+        <Stack>
+          <Stack.Screen name="(main)/(tabs)" options={{ headerShown: true }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      
+    </TamaguiProvider>
   );
 }
