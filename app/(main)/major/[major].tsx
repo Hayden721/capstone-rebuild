@@ -16,7 +16,7 @@ type postProps = {
   imageUrls: string;
 }
 
-// '/'에 해당하는 파일
+// 게시판 리스트
 export default function MajorDetail() {
 const theme = useTheme();
 const router = useRouter();
@@ -51,15 +51,6 @@ const handleLoadMore = async () => {
 }
 
 // 게시글 리스트 조회
-// useEffect(()=> {
-//   const loadInitialPosts = async () => {
-//     setRefreshLoad(true);
-//     await handleRefresh();
-//     setRefreshLoad(false);
-//   };
-
-//   loadInitialPosts();
-// }, [majorString]);
 useFocusEffect(
   useCallback(() => {
     const loadNewPosts = async() => {
@@ -71,12 +62,11 @@ useFocusEffect(
   }, [majorString])
 )
 
-
   return (
-    <YStack flex={1} backgroundColor={theme.color1?.val}>
+    <YStack style={{flex: 1, backgroundColor: theme.color1.val}}>
 
       {refreshLoad ? (
-        <YStack flex={1} justifyContent="center" alignItems="center">
+        <YStack style={{flex:1, justifyContent:'center', alignItems: 'center'}} >
           <ActivityIndicator size="large" color={theme.color10?.val || 'gray'} />
         </YStack>
       ):(
@@ -88,7 +78,7 @@ useFocusEffect(
           renderItem={({item}) => (
           <View borderBottomWidth={0.5} borderColor={"#999"} > 
           <TouchableOpacity onPress={() => router.push(`/major/${major}/${item.id}`)}>
-            <View padding={10} borderColor="beige" flexDirection='row' justifyContent='space-between'>
+            <View style={{padding:10, borderColor:'beige', flexDirection:'row', justifyContent:'space-between'}}>
               <View>
                 <Text fontSize={19}>{item.title}</Text>
                 <Text fontSize={16}>{item.content}</Text>
@@ -104,9 +94,6 @@ useFocusEffect(
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={theme.accent1?.val}/>}
         />
       )}
-
-        
-      
       {/* TODO: 고정된 게시글 추가 버튼 */}
       <FixedAddButton/>
     </YStack>  

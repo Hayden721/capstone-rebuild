@@ -15,7 +15,7 @@ export default function home() {
 const theme = useTheme();
 
   return (
-    <View flex={1} backgroundColor={theme.color1?.val}>
+    <View flex={1}>
       <YStack>
         <XStack>
         

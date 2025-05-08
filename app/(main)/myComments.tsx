@@ -4,7 +4,6 @@ import {
   Separator, Label, RadioGroup, Paragraph, 
   Theme, AnimatePresence, Image, styled, View, 
   useTheme} from 'tamagui';
-// import { View, styled } from '@tamagui/core';
 import { useRouter } from 'expo-router';
 
 
@@ -16,7 +15,7 @@ const theme = useTheme();
 const router = useRouter();
 //로그아웃
   return (
-  <View flex={1} backgroundColor="$background">
+  <View style={{flex:1, backgroundColor: theme.color1.val}}>
     <YStack>
       <Text>Mypost Test</Text>
     </YStack>

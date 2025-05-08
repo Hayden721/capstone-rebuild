@@ -16,12 +16,13 @@ import { BookText, Code2, CircuitBoard, Lightbulb } from '@tamagui/lucide-icons'
 export default function index() {
 const theme = useTheme(); // tamagui 테마
 const router = useRouter(); // expo-router 사용
-  return (
-  
-    <ScrollView flex={1} backgroundColor={theme.color1?.val} >
-      <YStack margin={10}>
+
+  return (  
+    <ScrollView style={{flex:1, backgroundColor: theme.color1.val}}>
+      <YStack style={{margin:10}}>
         {/* NOTI: 내가 작성한거 */}
         <YStack>
+          
           <BoardList label='내가 쓴 글' screen="/(main)/myPosts" icon={BookText}/>
           <BoardList label='내가 쓴 댓글' screen="/(main)/myComments" icon={BookText}/>
         </YStack>

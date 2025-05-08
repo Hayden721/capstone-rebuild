@@ -1,15 +1,14 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import React from 'react';
 import { useFonts } from 'expo-font';
 import { Redirect, Slot, Stack, useRouter, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
-import { TamaguiProvider } from '@tamagui/core'
-import { config } from '../tamagui.config';
+import { TamaguiProvider, Theme } from '@tamagui/core'
+import { tamaguiConfig } from '../tamagui.config';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar, useColorScheme } from 'react-native'
 import { useAuth } from '../hooks/useAuth';
-import { useTheme } from 'tamagui';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { useThemeContext } from '../hooks/useThemeContext';
 import { AuthProvider } from '../contexts/AuthContext';
@@ -24,12 +23,10 @@ export {
   ErrorBoundary,
 } from 'expo-router';
 
-
 export default function RootLayout() {
   // 폰트 로딩
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/NotoSansKR-Medium.ttf'),
-    ...FontAwesome.font,
+    NotoSans: require('../assets/fonts/NanumGothic-Regular.ttf'),
   });
   
   if (!loaded) {
@@ -73,9 +70,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           //   console.log('Redirecting to development screen...');
           //   router.replace('/major/com/ivTalbdY0B5YucotCOzV');
           // }
-          if(pathname !== '/register') {
-            router.replace('/(auth)/register');
-          }
+          // if(pathname !== '/my') {
+          //   router.replace('/(main)/(tabs)/my');
+          // }
         }, 100);
         
         return () => clearTimeout(redirectTimer);
@@ -103,7 +100,7 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
 
   return (
     <SafeAreaProvider>
-      <TamaguiProvider config={config} defaultTheme={themeMode}>
+      <TamaguiProvider config={tamaguiConfig} defaultTheme={themeMode}>
         <PortalProvider>
           <StatusBar
             barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}

@@ -8,7 +8,7 @@ type DropDownMenuProps = {
   major: string;
   postId: string;
 }
-
+// 게시글 상세 스크린 헤더 버튼 (글 삭제, 글 신고)
 export const PostDropDownMenu = ({major, postId}: DropDownMenuProps) => {
   const [menuVisible, setMenuVisible] = useState(false); // 메뉴의 가시성을 관리
   const theme = useTheme();
@@ -17,13 +17,13 @@ export const PostDropDownMenu = ({major, postId}: DropDownMenuProps) => {
     setMenuVisible(prev => !prev)
     console.log("토글 클릭");
   };
-
+  // 게시글 삭제 함수
   const handleDeletePost = () => {
     setMenuVisible(false);
     console.log("major menu", major);
 
   }
-
+  // 게시글 신고 함수
   const handleReportPost = () => {
     setMenuVisible(false);
     console.log("postId menu", postId);
@@ -33,7 +33,7 @@ export const PostDropDownMenu = ({major, postId}: DropDownMenuProps) => {
     <View>
       {/* 오른쪽 상단 버튼 */}
       <TouchableOpacity onPress={toggleMenu} style={{ padding: 8 }}>
-        <EllipsisVertical size={24} color={theme.color12?.val}/>
+        <EllipsisVertical size={24} color={'$color12'}/>
       </TouchableOpacity>
 
       {/* 드롭다운 메뉴 */}

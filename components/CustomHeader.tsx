@@ -1,6 +1,7 @@
 import { useTheme, XStack, Text } from "tamagui";
 
 import BackScreenButton from "./BackScreenButton";
+import { Platform, StyleSheet } from 'react-native';
 
 type CustomHeaderProps = {
   title?: string;
@@ -12,16 +13,25 @@ export const CustomHeader = ({title, showBackButton = true, children}: CustomHea
   const theme = useTheme();
 
   return (
-    <XStack height={50} alignItems='center' backgroundColor={theme.accent1?.val}>
-      <XStack flex={1} justifyContent="flex-start"> 
+    <XStack style={[styles.header, { backgroundColor: theme.accent6.val}]}>
+      <XStack style={{flex: 1, justifyContent:'flex-start'}} > 
         {showBackButton && <BackScreenButton/>}
       </XStack>
-      <XStack flex={1} justifyContent="center">
+      <XStack style={{flex:1, justifyContent: 'center'}}>
         {title && <Text fontSize={16}>{title}</Text>}
       </XStack>
-      <XStack flex={1} justifyContent="flex-end">
+      <XStack style={{flex:1, justifyContent: 'flex-end'}}>
         {children}    
       </XStack>
     </XStack>
   )
 }
+
+const styles = StyleSheet.create({
+  header: {
+    
+    maxHeight: Platform.OS === 'ios' ? 50 : 70,
+    alignItems: 'center',
+  }
+  
+})

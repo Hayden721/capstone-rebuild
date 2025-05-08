@@ -15,21 +15,21 @@ export default function BottomTabLayout() {
     
     <Tabs
     screenOptions={{
-      tabBarActiveTintColor: theme.accent1?.val, 
-      tabBarStyle: {
-        backgroundColor: theme.color1?.val,
-        borderTopWidth: 0,
+      tabBarActiveTintColor: theme.accent1.val,  // 바텀 탭 선택시 강조 색상
+      tabBarStyle: { // 탭 바 스타일
+        backgroundColor: theme.color1.val, // 탭 배경 색상
+        borderTopWidth: 0, // 탭 위 선 없애기
       },
-      headerStyle: {
-        backgroundColor: theme.color1?.val,  // 헤더 배경 색상 
+      headerStyle: { // 헤더 스타일
+        backgroundColor: theme.color1.val,  // 헤더 배경 색상 
         borderBottomWidth: 0, // 헤덜 바텀
         elevation: 0, // 안드로이드 그림자 제거
         shadowOpacity: 0, // iOS 그림자 제거
       },
       headerTitleStyle: {
-        color: theme.color12?.val,
+        color: theme.color12.val,
       },
-      headerTintColor: theme.color12?.val,
+      headerTintColor: theme.color12.val,
       title: '',
       animation: 'none',
 
@@ -50,7 +50,7 @@ export default function BottomTabLayout() {
                 {({ pressed }) => (
                   <AlertCircle
                     size={24}
-                    color={theme.color12?.val}
+                    color={theme.color12.val}
                     style={{ opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -80,7 +80,7 @@ export default function BottomTabLayout() {
       />
       {/* NOTI : 마이페이지 */}
       <Tabs.Screen
-        name="my"
+        name="(my)"
         options={{
           title: 'MY',
           headerTitle: '',
