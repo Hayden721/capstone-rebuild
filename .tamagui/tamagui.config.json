@@ -46747,6 +46747,7 @@
       "allowedStyleValues": "somewhat-strict-web",
       "maxDarkLightNesting": 2
     },
+    "defaultFont": "body",
     "unset": {
       "fontFamily": "$body"
     },
@@ -46819,7 +46820,6 @@
     },
     "parsed": true,
     "getNewCSS": "Function",
-    "defaultFont": "body",
     "fontSizeTokens": {},
     "specificTokens": {
       "$radius.0": {

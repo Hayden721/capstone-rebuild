@@ -1,9 +1,12 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
   sendEmailVerification,
-  getAuth, deleteUser
+  getAuth, deleteUser,
+  updateProfile
 } from 'firebase/auth';
 import { auth } from '../firebase';
 import { Alert } from 'react-native';
+
+
 
 // 회원가입
 export const firebaseSignUp = async (email: string, password: string) => {
@@ -51,9 +54,7 @@ export const firebaseLogin = async (email: string, password: string) => {
     if(error.code === "auth/invalid-credential"){
       Alert.alert("잘못된 계정입니다.")
     }
-  }
-  
-  
+  }  
 }
 
 // 파이어베이스 로그아웃
@@ -80,4 +81,23 @@ export const firebaseDeleteAccount = async () => {
       console.error("계정 삭제 오류", error);
     }
   }
+}
+
+// 파이어베이스 프로필 사진 변경
+export const firebaseUpdateProfileImage = async ( imageUrl: string ) => {
+  const user = auth.currentUser; // 현재 로그인된 계정
+
+  if(!user) {
+    throw new Error("로그인 상태가 아닙니다.");
+  }
+  await updateProfile(user, {
+    photoURL: imageUrl,
+  })
+
+}
+
+// 파이어베이스 Authentication 프로필 이미지 조회
+export const getFirebaseProfileImage = (): string|null => {
+  const user = auth.currentUser;
+  return user?.photoURL ?? null;
 }

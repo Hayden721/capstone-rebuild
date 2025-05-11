@@ -8,18 +8,11 @@ import majorTitleMap from '@/constants/majorTitleMap';
 import { useState } from "react";
 import PostDropDownMenu from "@/components/PostDropDownMenu";
 
-
-
-
-
-
-
 // (main) layout / 바텀탭 레이아웃
 export default function ListLayout() {
   const theme = useTheme();
   
   return (
-
     <Stack screenOptions={{
       headerShown: false,
       headerStyle: {

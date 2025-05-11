@@ -50,7 +50,7 @@ export default function BottomTabLayout() {
                 {({ pressed }) => (
                   <AlertCircle
                     size={24}
-                    color={theme.color12.val}
+                    color="$color12"
                     style={{ opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -80,24 +80,11 @@ export default function BottomTabLayout() {
       />
       {/* NOTI : 마이페이지 */}
       <Tabs.Screen
-        name="(my)"
+        name="my"
         options={{
           title: 'MY',
-          headerTitle: '',
-          tabBarIcon: ({color}) => <User size={24} color={color}/>,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable style={{ marginRight: 10}}>
-                {({ pressed }) => (
-                  <AlertCircle
-                    size={24}
-                    color={theme.color12?.val ?? '#000'}
-                    style={{ opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerShown: false,
+          tabBarIcon: ({color}) => <User size={24} color={color}/>
           
         }}
       />

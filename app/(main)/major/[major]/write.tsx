@@ -13,15 +13,19 @@ import pickImage from '@/utils/imagePicker';
 import { uploadImageAsync } from '@/firebase/storage';
 import { uploadPostToFirestore } from '@/firebase/firestore';
 import { auth } from '@/firebase';
+import { useAuth } from '@/hooks/useAuth';
+
 export default function write() {
 const theme = useTheme();
 const router = useRouter();
-
+const {user} = useAuth();
 const [title, setTitle] = useState(''); // 제목 
 const [content, setContent] = useState(''); // 컨텐츠
 const [imageUris, setImageUris] = useState<string[]>([]);
 const { major } = useLocalSearchParams(); // 현재 게시판 종류
-const majorString = major as string;
+const majorString = major as string; // 전공명 string 타입
+
+
 //이미지 피커 사용 
 const handleImagePicker = async() => {
   const result = await pickImage({maxImages: 5, currentUris: imageUris});
@@ -36,17 +40,24 @@ const removeImage = (uriToRemove: string) => {
 
 // 게시글 업로드
 const handleSubmit = async () => {
+  // 이메일이 없다면 리턴 시킴 
+  if (!user?.email) {
+    console.error("유저 이메일이 없습니다.");
+    return;
+  }
+  const email = user.email;
+
   const urls = await Promise.all(
     imageUris.map((uri) => uploadImageAsync(uri, majorString))
   );
 
   const newPostId = await uploadPostToFirestore({
-    title,
-    content,
+    title: title,
+    content: content,
     imageUrls: urls,
-    major,
-    userId: auth.currentUser?.email ?? 'anonymous',
-  })
+    major: majorString,
+    userId: email,
+  });
   // 게시글 작성을 완료하면 내가 작성한 게시글로 이동
   router.replace(`/major/${major}/${newPostId}`);
 };
@@ -142,16 +153,13 @@ const confirmSubmit = () => {
         </View>
 
         {/* 키보드 위 버튼 */}
-        <View
-          marginTop="auto"
-          flexDirection="row"
-          justifyContent="space-between"
-          padding="20"
-          alignItems="center"
-          backgroundColor={theme.color1?.val}
+        <View 
+          style={{marginTop: 'auto', flexDirection: 'row', 
+            justifyContent: 'space-between', padding: 20, 
+            alignItems:'center', backgroundColor: theme.color1.val}}  
         >
           <TouchableOpacity onPress={handleImagePicker} style={{ marginLeft: 10 }}>
-            <Camera size="$2" backgroundColor={theme.color1?.val} />
+            <Camera size="$2" color="$color1" />
           </TouchableOpacity>
           <TouchableOpacity onPress={confirmSubmit} style={{ marginRight: 10 }}>
             <Text fontSize="$5" fontWeight={600}>완료</Text>

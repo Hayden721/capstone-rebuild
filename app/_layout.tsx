@@ -70,9 +70,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           //   console.log('Redirecting to development screen...');
           //   router.replace('/major/com/ivTalbdY0B5YucotCOzV');
           // }
-          // if(pathname !== '/my') {
-          //   router.replace('/(main)/(tabs)/my');
-          // }
+          if(pathname !== '/my') {
+            router.replace('/(main)/(tabs)/my');
+          }
         }, 100);
         
         return () => clearTimeout(redirectTimer);

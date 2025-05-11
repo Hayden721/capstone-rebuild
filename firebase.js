@@ -35,4 +35,4 @@ const db = getFirestore(app); // Firebase firestroe(DB)사용
 const storage = getStorage(app); // Firebase storage 사용 (이미지 저장 등 )
 
 
-export { auth, db, storage } ;
+export { auth, db, storage, app } ;

@@ -9,10 +9,11 @@ export interface ImagePickerProps {
 }
 
 export const pickImage = async ({maxImages = 5, currentUris=[]}:ImagePickerProps ): Promise<string[] | null> => {
-  
+  let singleImage = true;
+  let editImage = false;
   console.log('pickImage 함수 호출됨');
   // 현재 이미지가 최대 개수를 초과한 경우
-  if(currentUris.length >= maxImages) {
+  if(currentUris.length > maxImages) {
     Alert.alert(`이미지는 최대 ${maxImages}장 업로드할 수 있습니다.`);
     return null;
   }
@@ -34,13 +35,20 @@ export const pickImage = async ({maxImages = 5, currentUris=[]}:ImagePickerProps
         }
       ]
     )
-    return null;
+    return null; // 권한이 없다면 이미지 픽커 사용 중지
   }
+
+// 이미지를 한개만 사용해야 할 때
+if(maxImages === 1) {
+  singleImage = false;
+  editImage = true;
+}
 
   // 이미지 피커 띄우기
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ['images'],    
-    allowsMultipleSelection: true,
+    allowsMultipleSelection: singleImage,
+    allowsEditing: editImage,
     quality: 1,
   });
   // 이미지를 선택했을 때 
@@ -54,12 +62,14 @@ export const pickImage = async ({maxImages = 5, currentUris=[]}:ImagePickerProps
     );
 
     // 현재 이미지와 새로 선택된 이미지 합치기
-    return ([...currentUris, ...compressedUris].slice(0, maxImages)); // 이미지를 
+    return ([...currentUris, ...compressedUris].slice(0, maxImages));
   } else {
     console.log('사용자가 선택 취소함');
   }
   return null;
 };
+
+
 // 이미지 압축 함수
 const compressImage = async(uri: string) => {
   const result = await ImageManipulator.manipulateAsync(

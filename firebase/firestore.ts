@@ -5,7 +5,7 @@ import {
   
   } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { commentProps, postProps } from '@/type/firebaseType';
+import { commentProps, postUploadProps } from '@/type/firebaseType';
 import { getCommentProps } from '../type/firebaseType';
 import { typeOf } from '../node_modules/uri-js/dist/esnext/util';
 
@@ -14,7 +14,7 @@ import { typeOf } from '../node_modules/uri-js/dist/esnext/util';
 let lastVisible: QueryDocumentSnapshot<DocumentData> | null = null;
 
 // 게시글 업로드
-export const uploadPostToFirestore = async({title, content, imageUrls, major, userId}: postProps) => {
+export const uploadPostToFirestore = async({title, content, imageUrls, major, userId}: postUploadProps) => {
   const docRef = await addDoc(collection(db, major), {
     title, // 제목 
     content, // 내용
@@ -116,7 +116,6 @@ export const getComments = async ({ major, postId }: { major: string; postId: st
       content: data.content,
       userId: data.userId,
       createdAt: createdAt
-      
     };
   });
 };
