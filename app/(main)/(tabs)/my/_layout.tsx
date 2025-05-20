@@ -7,7 +7,7 @@ export default function MyPageLayout () {
 
 	return (
 		<Stack screenOptions={{
-			headerShown: true,
+			headerShown: false,
 			headerStyle: {
 				backgroundColor: theme.color1.val,
 				

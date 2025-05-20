@@ -4,7 +4,7 @@ import { auth } from "../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type SimplifiedUser = {
-  uid: string;
+  uid: string| null;
   email: string|null;
   photoURL: string|null; 
 }
@@ -22,16 +22,40 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
   const [loading, setLoading] = useState<boolean>(true); 
 
   useEffect(() => {
+    // 1. 먼저 캐시된 사용자 정보 불러오기
+    const loadCachedUser = async () => {
+      try {
+        const cachedUser = await AsyncStorage.getItem('user');
+        if(cachedUser) {
+          const parsedUser: SimplifiedUser = JSON.parse(cachedUser);
+      setUser(parsedUser);
+        }
+      } catch(error){
+        console.log('Error reading user from AsyncStorage', error);
+      }
+    }
+
+    loadCachedUser();
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       console.log('> onAuthStateChanged triggered');
+      
+      setLoading(true);
+      
       try {
         if (user) { 
           console.log("> AuthContext.tsx 로그인 상태", user.email);
-          setUser(user);
-          await AsyncStorage.setItem('user', JSON.stringify(user));
+          const simplifiedUser: SimplifiedUser = {
+            uid: user.uid,
+            email: user.email,
+            photoURL: user.photoURL ?? null,
+          };
+
+          setUser(simplifiedUser);
+          await AsyncStorage.setItem('user', JSON.stringify(simplifiedUser));
         } else {
           console.log("? 로그인 안 된 상태");
-          setUser(null); // 
+          setUser(null); 
           await AsyncStorage.removeItem('user');
         }
       } catch (e) {
@@ -39,8 +63,8 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
         setUser(null);
         await AsyncStorage.removeItem('user');
       } finally {
-        console.log('> Auth loading end');
         setLoading(false);
+        console.log('> Auth loading end');
       }
     });
   

@@ -13,7 +13,7 @@ export const CustomHeader = ({title, showBackButton = true, children}: CustomHea
   const theme = useTheme();
 
   return (
-    <XStack style={[styles.header, { backgroundColor: theme.accent6.val}]}>
+    <XStack style={[styles.header, { backgroundColor: theme.color1.val}]}>
       <XStack style={{flex: 1, justifyContent:'flex-start'}} > 
         {showBackButton && <BackScreenButton/>}
       </XStack>
@@ -29,8 +29,7 @@ export const CustomHeader = ({title, showBackButton = true, children}: CustomHea
 
 const styles = StyleSheet.create({
   header: {
-    
-    maxHeight: Platform.OS === 'ios' ? 50 : 70,
+    height: Platform.OS === 'ios' ? 40 : 70,
     alignItems: 'center',
   }
   

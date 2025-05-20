@@ -3,9 +3,19 @@ import { createTamagui, createFont, createTokens } from 'tamagui'
 import { defaultConfig } from '@tamagui/config/v4'
 import { themes } from './themes';
 
-
 const notoSans = createFont({
   family: 'NotoSans',
+  weight: {
+    1: '100',
+    2: '200',
+    3: '300',
+    4: '400',
+    5: '500',
+    6: '600',
+    7: '700',
+    8: '800',
+    9: '900'
+  },
   size: {
     1: 12,
     2: 14,
@@ -13,15 +23,7 @@ const notoSans = createFont({
     4: 18,
     5: 20,
     6: 24,
-    7: 28,
-    8: 32,
-    9: 36,
-    10: 40,
-    11: 44,
-    12: 48,
-  },
-  letterSpacing: {
-    4: 0,
+    7: 30,
   },
   lineHeight: {
     1: 16,
@@ -30,26 +32,23 @@ const notoSans = createFont({
     4: 28,
     5: 32,
     6: 36,
-    7: 40,
-    8: 44,
-    9: 48,
-    10: 52,
-    11: 56,
-    12: 60,
+    7: 42,
+  },
+  letterSpacing: {
+    1: 0,
+    2: 0.5,
+    3: 1,
   },
 })
-
 
 export const tamaguiConfig = createTamagui({
   ...defaultConfig,
   themes,
   fonts: {
-    heading: notoSans,
-    body: notoSans,
-    mono: notoSans,
+    ...defaultConfig.fonts, // 기존 폰트 설정 유지
+    notoSans, // notoSans 폰트만 추가
   },
-  defaultFont: 'body', // 전역 폰트 지정
-  
+  defaultFont: 'notoSans', // 기본 폰트로는 설정 가능
 })
 
 export default tamaguiConfig

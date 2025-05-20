@@ -5,6 +5,8 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
 } from 'firebase/auth';
 import { auth } from '../firebase';
 import { Alert } from 'react-native';
+import { uploadProfileImageAsync } from '@/firebase/storage';
+
 
 
 
@@ -38,16 +40,16 @@ export const firebaseLogin = async (email: string, password: string) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    if(!user.emailVerified) {
-      Alert.alert(
-        '이메일 인증 필요',
-        '이메일 인증을 해주세요.',
-        [{text: '확인'}]
-      );  
-      // 이메일 인증 안했으면 로그아웃
-      await auth.signOut();
-      return;
-    }
+    // if(!user.emailVerified) {
+    //   Alert.alert(
+    //     '이메일 인증 필요',
+    //     '이메일 인증을 해주세요.',
+    //     [{text: '확인'}]
+    //   );  
+    //   // 이메일 인증 안했으면 로그아웃
+    //   await auth.signOut();
+    //   return;
+    // }
     
   } catch(error: any) {
     console.log('로그인 실패', error);
@@ -93,7 +95,6 @@ export const firebaseUpdateProfileImage = async ( imageUrl: string ) => {
   await updateProfile(user, {
     photoURL: imageUrl,
   })
-
 }
 
 // 파이어베이스 Authentication 프로필 이미지 조회
@@ -101,3 +102,22 @@ export const getFirebaseProfileImage = (): string|null => {
   const user = auth.currentUser;
   return user?.photoURL ?? null;
 }
+
+export const updateProfileImage = async (localImage: string): Promise<{
+  name: string|null;
+  email: string|null;
+  photoUrl: string|null;
+}> => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (!user) throw new Error("로그인된 사용자가 없습니다.");
+  const downLoadURL = await uploadProfileImageAsync(localImage, user.uid);
+  
+  await updateProfile(user, {photoURL: downLoadURL});
+  return {
+    name: user.displayName,
+    email: user.email,
+    photoUrl: user.photoURL
+  }
+}
+

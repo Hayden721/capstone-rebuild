@@ -37,8 +37,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": 
-    [
+    "plugins": [
       "expo-router",
       [
         "expo-image-picker",
@@ -55,6 +54,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "4d588621-5d8f-455d-8ffa-210537714c0f"
+      }
     }
   }
 }

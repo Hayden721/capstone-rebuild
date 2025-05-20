@@ -5,11 +5,13 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "*": ["src/*"]
-    }
+      "@/*": ["./*"],
+      "*": ["src/*"],
+      "tamagui.config": ["tamagui.config.ts"] 
+    },  
+    
+    "types": ["tamagui"]
+    
   },
   "include": [
     "**/*.ts",

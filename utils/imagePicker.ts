@@ -38,18 +38,18 @@ export const pickImage = async ({maxImages = 5, currentUris=[]}:ImagePickerProps
     return null; // 권한이 없다면 이미지 픽커 사용 중지
   }
 
-// 이미지를 한개만 사용해야 할 때
-if(maxImages === 1) {
-  singleImage = false;
-  editImage = true;
-}
+  // 이미지를 한개만 사용해야 할 때
+  if(maxImages === 1) {
+    singleImage = false;
+    editImage = true;
+  }
 
   // 이미지 피커 띄우기
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ['images'],    
     allowsMultipleSelection: singleImage,
     allowsEditing: editImage,
-    quality: 1,
+    quality: 0.7,
   });
   // 이미지를 선택했을 때 
   if (!result.canceled && result.assets) {
@@ -74,9 +74,9 @@ if(maxImages === 1) {
 const compressImage = async(uri: string) => {
   const result = await ImageManipulator.manipulateAsync(
     uri,
-    [{resize: {width: 1024}}],
+    [{resize: {width: 300}}],
     {
-      compress:0.7,
+      compress:0.5,
       format: ImageManipulator.SaveFormat.JPEG,
     }
   )

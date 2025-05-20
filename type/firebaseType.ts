@@ -34,3 +34,11 @@ export interface getCommentProps {
   userId: string;
   createdAt: Date;
 }
+
+export interface getChatroomProps {
+  id: string;
+  title: string;
+  explain: string;
+  imageURL: string|null;
+  createdAt: Timestamp|Date;
+}

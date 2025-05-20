@@ -3,79 +3,69 @@ import { Camera } from "@tamagui/lucide-icons";
 import React, { useEffect, useState } from "react";
 import { View, ScrollView, TouchableOpacity, StyleSheet, Pressable, Alert } from "react-native";
 import { Avatar, H1, H2, useTheme, YStack, Text, XStack, H3, H4, H5, H6, Switch, Spinner } from "tamagui";
-import { firebaseDeleteAccount, firebaseLogout, firebaseUpdateProfileImage, getFirebaseProfileImage } from "@/firebase/auth";
+import { firebaseDeleteAccount, firebaseLogout, firebaseUpdateProfileImage, updateProfileImage } from "@/firebase/auth";
 import { useRouter } from "expo-router";
 import { ThemeToggleButton } from "@/components/ThemeToggle";
 import pickImage from '@/utils/imagePicker'; // 이미지 픽커
 import { useAuth } from "@/hooks/useAuth";
-import { uploadProfileImageAsync } from "@/firebase/storage";
+
 import { Modal } from "react-native";
-import { onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { auth } from '@/firebase';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function My() {
 	const theme = useTheme();
 	const router = useRouter();
-	const [imageUris, setImageUris] = useState<string[]>([]);
+	// const [imageUris, setImageUris] = useState<string[]>([]);
 	const {user, setUser} = useAuth();
-	const uid = user?.uid;
+	const uid = user?.uid; // 유저 uid
 	const [profileImage, setProfileImage] = useState<string|null>(null); // 프로필 이미지 url 조회
-	const [userImgLoading, setUserImgLoading] = useState(false);
+	const [userImgLoading, setUserImgLoading] = useState(false); // 이미지 업로드 로딩 상태
 	
-	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-			if(authUser) {
-				setUser(authUser);
-			}else {
-				setUser(null);
-			}
-		});
-		return () => unsubscribe();
-	}, []);
 
 	useEffect(() => {
-		if (user?.photoURL) {
-			setProfileImage(`${user.photoURL}?init=${Date.now()}`);
-		}
-	}, [user?.photoURL]);
-	// 프로필 사진 변경
-	const handleImagePicker = async () => {
-		const result = await pickImage({maxImages: 1, currentUris: imageUris});
-		console.log("프로필 이미지", result);
-		if(result && result.length > 0) {
-			setImageUris(result);
-			await handleProfileImageChange(result[0]);
-			console.log("사진 업로드 실행")
-		}
-		
-	}
-	// 프로필 이미지 업로드 (return값: imageUrl)
-	const handleProfileImageChange = async (imageUri: string) => {
-		if(!user?.uid) return;
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      setProfileImage(user.photoURL); // 초기 이미지 설정
+    }
+  }, []);
 
-		setUserImgLoading(true);
 
-		try{
-			// 1. 이미지 업로드 후 이미지url 반환
-		const url = await uploadProfileImageAsync(imageUri , uid);
-		// 2. Firebase Auth 사용자 프로필 업데이트
-		await firebaseUpdateProfileImage(url);
-		// 3. 사용자 정보 리로드
-		await auth.currentUser?.reload();
-		const updateUser = auth.currentUser;
-		if(updateUser) {
-			setUser(updateUser);
-			setProfileImage(`${updateUser.photoURL}?t=${Date.now()}`);
-		}
+const handleUpdateProfileImage = async () => {
+  setUserImgLoading(true);
+  try {
+    const picked = await pickImage({ maxImages: 1 });
+    if (picked && picked.length > 0) {
+      const updateUser = await updateProfileImage(picked[0]);
+      setProfileImage(updateUser.photoUrl);
 
-		Alert.alert("프로필 사진을 변경했습니다.");
-		} catch(error) {
-			console.error("프로필 이미지 업로드 실패 : ", error);
-		} finally {
-			setUserImgLoading(false);
-		}
-		
-	}
+      // Firebase Auth의 currentUser 새로고침
+      await auth.currentUser?.reload();
+      const refreshedUser = auth.currentUser;
+
+      //  상태 업데이트
+      if (refreshedUser) {
+        setUser(refreshedUser); // useAuth 상태 업데이트
+        setProfileImage(`${refreshedUser.photoURL}?t=${Date.now()}`);
+
+        // AsyncStorage 업데이트
+        try {
+          await AsyncStorage.setItem('user', JSON.stringify(refreshedUser));
+          console.log("AsyncStorage에 변경된 유저 정보 저장 완료");
+        } catch (error) {
+          console.error("> AsyncStorage 저장 실패:", error);
+        }
+      }
+    }
+  } catch (e: any) {
+    Alert.alert("프로필 이미지 변경 오류", e.message);
+  } finally {
+    setUserImgLoading(false);
+  }
+};
 
 	//로그아웃
 	const handleLogout = async () => {
@@ -133,52 +123,52 @@ export default function My() {
 					<Spinner size="large" color="$accent1" />
 				</View>
 			</Modal>
-
-			<ScrollView style={{flex:1, padding: 10, backgroundColor: theme.color1.val}}>
-
-				{/* 프로필 이미지 변경 */}
-				<XStack>
-					<View style={{position: 'relative',alignSelf:'flex-start'}}>
-						
-						<Avatar key={profileImage} circular size="$8">
-							<Avatar.Image src={profileImage} />
-						</Avatar>
-						<TouchableOpacity onPress={handleImagePicker} style={styles.imageButton}>
-								<Camera size="$1.5"/>
-						</TouchableOpacity>
-					</View>
-					<Text style={{fontSize: 18}}>이메일</Text>
-				</XStack>
-
-				<Divider/>
-				
-				<YStack>
-					<H6>계정</H6>
-					<TouchableOpacity onPress={()=> router.navigate('/(main)/(tabs)/my/chagePassword')} 
-						style={{paddingTop:8, paddingBottom:8}}>
-							<Text style={{fontSize:15}}>
-								비밀번호 변경
-							</Text>
-					</TouchableOpacity>
-				</YStack>
-				<Divider/>
-
-				<YStack>
-				<H6>앱 설정</H6>
-					<XStack style={{justifyContent: 'space-between'}}>
-					<TouchableOpacity style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>다크모드</Text></TouchableOpacity>
-					<ThemeToggleButton/>
+			<SafeAreaView style={{flex:1, backgroundColor: theme.color1.val}}>
+				<ScrollView style={{flex:1, padding: 10, backgroundColor: theme.color1.val}}>
+					{/* 프로필 이미지 변경 */}
+					<XStack>
+						<View style={{position: 'relative',alignSelf:'flex-start'}}>
+							
+							<Avatar key={profileImage} circular size="$8">
+								<Avatar.Image src={profileImage} />
+							</Avatar>
+							<TouchableOpacity onPress={handleUpdateProfileImage} style={styles.imageButton}>
+									<Camera size="$1.5"/>
+							</TouchableOpacity>
+						</View>
+						<Text style={{fontSize: 18}}>{user?.email}</Text>
 					</XStack>
-				</YStack>
-				<Divider/>
 
-				<YStack>
-					<H6>기타</H6>
-					<TouchableOpacity onPress={handleLogout} style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>로그아웃</Text></TouchableOpacity>
-					<TouchableOpacity onPress={handleDeleteAccount} style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>회원탈퇴</Text></TouchableOpacity>
-				</YStack>
-				<Divider/>
-			</ScrollView>
+					<Divider/>
+					
+					<YStack>
+						<H6>계정</H6>
+						<TouchableOpacity onPress={()=> router.navigate('/(main)/(tabs)/my/changePassword')} 
+							style={{paddingTop:8, paddingBottom:8}}>
+								<Text style={{fontSize:15}}>
+									비밀번호 변경
+								</Text>
+						</TouchableOpacity>
+					</YStack>
+					<Divider/>
+
+					<YStack>
+					<H6>앱 설정</H6>
+						<XStack style={{justifyContent: 'space-between'}}>
+						<TouchableOpacity style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>다크모드</Text></TouchableOpacity>
+						<ThemeToggleButton/>
+						</XStack>
+					</YStack>
+					<Divider/>
+
+					<YStack>
+						<H6>기타</H6>
+						<TouchableOpacity onPress={handleLogout} style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>로그아웃</Text></TouchableOpacity>
+						<TouchableOpacity onPress={handleDeleteAccount} style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>회원탈퇴</Text></TouchableOpacity>
+					</YStack>
+					<Divider/>
+				</ScrollView>
+			</SafeAreaView>
 		</>
 	);
 }

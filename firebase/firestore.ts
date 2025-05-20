@@ -1,13 +1,14 @@
 import {
   collection, addDoc, Timestamp, query, orderBy, getDocs, 
   startAfter,limit, QueryDocumentSnapshot, DocumentData, doc, getDoc,
-  onSnapshot,
-  
+  onSnapshot, updateDoc,
   } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { commentProps, postUploadProps } from '@/type/firebaseType';
-import { getCommentProps } from '../type/firebaseType';
-import { typeOf } from '../node_modules/uri-js/dist/esnext/util';
+import { commentProps, getChatroomProps, postUploadProps } from '@/type/firebaseType';
+
+import { IMessage } from 'react-native-gifted-chat';
+import { uploadChatroomImage } from './storage';
+import { toDate } from '../node_modules/date-fns/fp/toDate';
 
 // 회원가입
 
@@ -119,3 +120,86 @@ export const getComments = async ({ major, postId }: { major: string; postId: st
     };
   });
 };
+// 채팅방 생성
+export const createChatroom = async ({title, explain, imageUri}: {title:string, explain:string, imageUri:string|null}) => {
+  
+  try{
+    // 채팅방 문서 추가 (return 채팅방 id)
+    const chatroomRef = await addDoc(collection(db, 'chatrooms'),{
+      title, // 채팅방 제목
+      explain, // 채팅방 설명
+      createdAt: Timestamp.now() // 채팅방 생성 날짜
+    })
+    const chatroomId = chatroomRef.id;
+    
+    // 이미지 업로드 후 imageURL을 문서에 업데이트
+    if(imageUri) {
+      const imageURL = await uploadChatroomImage(imageUri, chatroomId);
+      
+      await updateDoc(doc(db, 'chatrooms', chatroomId), {
+        imageURL,
+      });
+    }
+
+    return chatroomId;
+    
+  } catch(error) {
+    console.log(error);
+  }
+}
+// 채팅방 리스트 조회
+export const getChatroomList = async () => {
+  
+  try {
+    const chatroomRef = collection(db, 'chatrooms');
+    const chatroomQuery = query(chatroomRef, orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(chatroomQuery);
+
+    const chatrooms = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    return chatrooms;
+  } catch(error) {
+    console.error('채팅방 목록 조회 오류 : ', error);
+    return [];
+  }
+  
+}
+
+// 채팅 메시지 조회 
+export const subscribeToMessages = (chatroomId: string, callback:(message: any) => void) => {
+  const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
+  const q = query(messageRef, orderBy('createdAt', 'desc'));
+  
+  return onSnapshot(q, snapshot => {
+    const messages = snapshot.docs.map((doc) => {
+			const data = doc.data();
+			return {
+				_id: data._id,
+				text: data.text,
+				createdAt: data.createdAt?.toDate?.() ?? new Date(),
+				user: data.user
+			}
+		});
+    callback(messages);
+  });
+}
+// 채팅보내기
+export const sendMessage = async ({chatroomId, message}:{chatroomId:string; message: IMessage;}) => {
+  const {_id, user, text} = message;
+  const safeUser = {
+    _id: user._id,
+    name: user.name,
+    ...(user.avatar ? {avatar: user.avatar}: {}) // 아바타 이미지가 없을 때 대비
+  }
+
+	const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
+	await addDoc(messageRef, {
+		_id: message._id, // 메시지 id
+		user: safeUser, // 유저 정보
+		text: message.text, // message text
+		createdAt: Timestamp.now(),
+	})
+}
+

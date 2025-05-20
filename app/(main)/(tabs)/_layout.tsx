@@ -22,7 +22,7 @@ export default function BottomTabLayout() {
       },
       headerStyle: { // 헤더 스타일
         backgroundColor: theme.color1.val,  // 헤더 배경 색상 
-        borderBottomWidth: 0, // 헤덜 바텀
+        borderBottomWidth: 0, // 헤더 바텀
         elevation: 0, // 안드로이드 그림자 제거
         shadowOpacity: 0, // iOS 그림자 제거
       },
@@ -38,7 +38,7 @@ export default function BottomTabLayout() {
       >
       {/* NOTI : index.tsx(main)  */}
       <Tabs.Screen
-        name="home"
+        name="index"
         options={{
           title: '홈',
           headerTitle: 'home',
@@ -61,7 +61,7 @@ export default function BottomTabLayout() {
       />
       {/* NOTI : 게시판 상단 탭 */}
       <Tabs.Screen
-        name="(board)"
+        name="board"
         options={{
           title: '게시판',
           headerTitle: 'board',
@@ -74,7 +74,8 @@ export default function BottomTabLayout() {
         name="chat"
         options={{
           title: '채팅',
-          headerTitle: 'board',
+          headerTitle: 'chat',
+          headerShown: false,
           tabBarIcon: ({ color }) => <MessageCircle size={24} color={color}/>
         }}
       />

@@ -10,22 +10,17 @@ const FixedAddButton: React.FC = () => {
   const theme = useTheme();
   return (
   <Button 
-    position="absolute" 
-    bottom={20} 
-    right={20} 
-    width={60}
-    height={60}
-    borderRadius={30}
-    size="$5" 
-    backgroundColor={theme.accent1?.val}
-    alignItems="center"
-    justifyContent="center"
-    icon={<Plus size={20} />}
+    style={{
+      position:"absolute", bottom:30, right:30, borderRadius:30,
+      backgroundColor: theme.accent1.val, alignItems:'center', justifyContent:'center'
+    }}
+    circular={true}
+    size="$6" 
+    icon={<Plus size={25} />}
     onPress={() => {
       router.push(`./${major}/write`);
     }}
     >
-    
   </Button>
   )
 }

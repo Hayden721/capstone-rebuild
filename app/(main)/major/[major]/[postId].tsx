@@ -73,7 +73,7 @@ const handleSubmitComment = () => {
 return (
   (
     <KeyboardAvoidingView
-    style={{ flex: 1 }}
+    style={{ flex: 1, backgroundColor: theme.color1.val }}
     behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     keyboardVerticalOffset={Platform.OS === 'ios'? -30 : 0}
     >
@@ -91,7 +91,7 @@ return (
               keyboardShouldPersistTaps="handled"
               ListHeaderComponent={
                 <>
-                  <XStack style={{ backgroundColor: theme.accent11.val }}>
+                  <XStack style={{ backgroundColor: theme.color1.val }}>
                     <Image
                       source={require('@/assets/images/Chill_guy.jpg')}
                       width={55}
