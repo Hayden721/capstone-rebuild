@@ -29,7 +29,7 @@ export const CustomHeader = ({title, showBackButton = true, children}: CustomHea
 
 const styles = StyleSheet.create({
   header: {
-    height: Platform.OS === 'ios' ? 40 : 70,
+    height: Platform.OS === 'ios' ? 40 : 50,
     alignItems: 'center',
   }
   

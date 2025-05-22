@@ -7,12 +7,13 @@ import 'react-native-reanimated';
 import { TamaguiProvider, Theme } from '@tamagui/core'
 import { tamaguiConfig } from '../tamagui.config';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'react-native'
+import { StatusBar, Modal } from 'react-native'
 import { useAuth } from '../hooks/useAuth';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { useThemeContext } from '../hooks/useThemeContext';
 import { AuthProvider } from '../contexts/AuthContext';
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 // root 레이아웃 (최상위 레이아웃)
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -70,9 +71,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           //   console.log('Redirecting to development screen...');
           //   router.replace('/major/com/ivTalbdY0B5YucotCOzV');
           // }
-          // if(pathname !== '/chat') {
-          //   router.replace('/(main)/(tabs)/chat');
-          // }
+          if(pathname !== '/chat/9K80RQakI7AKYw4Jdy88/chatroom') {
+            router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');
+          }
           console.log("현재 경로 : ", pathname);
         }, 100);
         
@@ -109,27 +110,29 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   if (loading || !loaded) return null; // 로딩이 되지 않았으면 렌더링 하지 않는다.
 
   return (
-    <SafeAreaProvider>
-      <TamaguiProvider config={tamaguiConfig} defaultTheme={themeMode}>
-        
-        <StatusBar
-          barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}
-          translucent
-          backgroundColor="transparent"
-        />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <TamaguiProvider config={tamaguiConfig} defaultTheme={themeMode}>
+          
+          <StatusBar
+            barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}
+            translucent
+            backgroundColor="transparent"
+          />
 
-        <Stack screenOptions={{ 
-          headerShown: false,
-          animation: 'default',
-          }}
-        >
-          <Stack.Screen name="(auth)"/> 
-          <Stack.Screen name="(main)"/>  
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> 
-        </Stack>
-        
-      </TamaguiProvider>
-    </SafeAreaProvider>
+          <Stack screenOptions={{ 
+            headerShown: false,
+            animation: 'default',
+            }}
+          >
+            <Stack.Screen name="(auth)"/> 
+            <Stack.Screen name="(main)"/>  
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> 
+          </Stack>
+          
+        </TamaguiProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   )
 }
 

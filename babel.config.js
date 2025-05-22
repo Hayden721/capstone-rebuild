@@ -12,10 +12,7 @@ module.exports = function (api) {
           disableExtraction: process.env.NODE_ENV === 'development',
         },
       ],
-
-      
-      'react-native-reanimated/plugin' // 반드시 맨 마지막에 위치
-    
+      'react-native-reanimated/plugin' // 반드시 맨 마지막에 위치    
     ], 
   };
 };
