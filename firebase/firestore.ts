@@ -187,7 +187,7 @@ export const subscribeToMessages = (chatroomId: string, callback:(message: any) 
 }
 // 채팅보내기
 export const sendMessage = async ({chatroomId, message}:{chatroomId:string; message: IMessage;}) => {
-  const {_id, user, text} = message;
+  const {_id, user, text, image} = message;
   const safeUser = {
     _id: user._id,
     name: user.name,
@@ -195,11 +195,19 @@ export const sendMessage = async ({chatroomId, message}:{chatroomId:string; mess
   }
 
 	const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
-	await addDoc(messageRef, {
-		_id: message._id, // 메시지 id
-		user: safeUser, // 유저 정보
-		text: message.text, // message text
-		createdAt: Timestamp.now(),
-	})
+
+  const baseMessageData = {
+    _id: message._id, // 메시지 id
+    user: safeUser, // 유저 정보
+    text: message.text || '', // message text
+    createdAt: Timestamp.now(),
+  };
+
+  // 이미지가 있는 경우에만 image 필드 추가
+  const messageData = image 
+  ? { ...baseMessageData, image } 
+  : baseMessageData;
+
+	await addDoc(messageRef, messageData)
 }
 

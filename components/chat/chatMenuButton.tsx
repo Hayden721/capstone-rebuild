@@ -20,7 +20,6 @@ export const ChatMenuButton = ({onPress, icon, title}: ChatMenuButtonProps) => {
 			<Text>{title}</Text>
 		</View>
 	)
-
 }
 
 const styles = StyleSheet.create({

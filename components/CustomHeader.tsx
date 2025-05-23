@@ -1,4 +1,4 @@
-import { useTheme, XStack, Text } from "tamagui";
+import { useTheme, XStack, Text, ColorTokens } from "tamagui";
 
 import BackScreenButton from "./BackScreenButton";
 import { Platform, StyleSheet } from 'react-native';
@@ -7,13 +7,14 @@ type CustomHeaderProps = {
   title?: string;
   showBackButton: boolean;
   children?: React.ReactNode;
+  
 }
 // 커스텀 헤더
 export const CustomHeader = ({title, showBackButton = true, children}: CustomHeaderProps) => {
   const theme = useTheme();
 
   return (
-    <XStack style={[styles.header, { backgroundColor: theme.color1.val}]}>
+    <XStack style={[styles.header]}>
       <XStack style={{flex: 1, justifyContent:'flex-start'}} > 
         {showBackButton && <BackScreenButton/>}
       </XStack>

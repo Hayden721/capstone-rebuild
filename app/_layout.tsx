@@ -71,9 +71,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           //   console.log('Redirecting to development screen...');
           //   router.replace('/major/com/ivTalbdY0B5YucotCOzV');
           // }
-          if(pathname !== '/chat/9K80RQakI7AKYw4Jdy88/chatroom') {
-            router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');
-          }
+          // if(pathname !== '/chat/9K80RQakI7AKYw4Jdy88/chatroom') {
+          //   router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');
+          // }
           console.log("현재 경로 : ", pathname);
         }, 100);
         
