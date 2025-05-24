@@ -14,6 +14,7 @@ import { ChatMenuButton } from "@/components/chat/chatMenuButton";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { pickImage } from "@/utils/imagePicker";
 import { uploadChatImage } from "@/firebase/storage";
+import Lightbox from "react-native-lightbox-v2";
 
 	export default function ChatRoom() {
 		const theme = useTheme();
@@ -66,6 +67,8 @@ import { uploadChatImage } from "@/firebase/storage";
 			setIsUploading(true);
 			try {
 				const downloadURL = await uploadChatImage(imageUri, roomId);
+				console.log('이미지 스토어 저장 : ', downloadURL);
+
 				const imageMessage: IMessage = {
 					_id: Math.random().toString(36).substring(7),
 					text: '',
@@ -81,6 +84,7 @@ import { uploadChatImage } from "@/firebase/storage";
 					chatroomId: roomId,
 					message: imageMessage,
 				})
+
 			} catch(e) {
 				console.error('이미지 업로드 실패', e);
 				Alert.alert('오류', '이미지 채팅 전송 실패');
@@ -98,14 +102,11 @@ import { uploadChatImage } from "@/firebase/storage";
 			return () => unsubscribe();
 		}, [chatroomId]);
 
+		// 바텀 시트 실행 함수
 		const openBottomSheet = () => {
 			console.log("바텀 시트 실행", bottomSheetRef.current);
 			bottomSheetRef.current?.expand();
 		};
-		// 사진 메시지 전송 
-		const imageChat = async () => {
-
-		}
 
 		// 배경 터치 시 BottomSheet 닫기
 		const renderBackdrop = useCallback(
@@ -185,11 +186,11 @@ import { uploadChatImage } from "@/firebase/storage";
 					}}
 					timeTextStyle={{
 						right: {
-							color: 'rgba(255, 255, 255, 0.7)',
+							color: theme.color2.val,
 							fontSize: 10,
 						},
 						left: {
-							color: 'rgba(0, 0, 0, 0.5)',
+							color: theme.color11.val,
 							fontSize: 10,
 						},
 					}}
@@ -197,29 +198,51 @@ import { uploadChatImage } from "@/firebase/storage";
 			);
 		};
 
+		// 이미지 메시지 커스텀
 		const renderCustomMessageImage = (props: MessageImageProps) => {
+			const { currentMessage } = props;
+		
+			// 디버깅 로그 추가
+			console.log('이미지 렌더링:', currentMessage?.image);
+			if (!currentMessage?.image) return null;
+		
 			return (
-				<View style={{ borderRadius: 12, padding: 4 }}>
+				<View style={{padding:3}}>
+				<Lightbox			
+					swipeToDismiss={true}
+					renderContent={() => (
+						<Image
+							source={{ uri: currentMessage.image }}
+							style={{
+								width: '100%',
+								height: '100%',
+								resizeMode: 'contain',
+								backgroundColor: 'black',
+							}}
+						/>
+					)}
+				>
 					<Image
-						source={{ uri: props.currentMessage?.image }}
+						source={{ uri: currentMessage.image }}
 						style={{ width: 200, height: 150, borderRadius: 12 }}
 						resizeMode="cover"
 					/>
+				</Lightbox>
 				</View>
 			);
 		};
-		
+		// 채팅창 가운데 날짜 커스텀
 		const renderCustomDay = (props) => {
 			return (
 				<Day
 					{...props}
 					textStyle={{
-						color: '#FFFFFF', // 흰색 텍스트
+						color: theme.color1.val, // 흰색 텍스트
 						fontSize: 12,
 						fontWeight: '600',
 					}}
 					wrapperStyle={{
-						backgroundColor: theme.color12.val, // 배경색 변경
+						backgroundColor: theme.color10.val, // 배경색 변경
 						paddingHorizontal: 12,
 						paddingVertical: 6,
 						borderRadius: 15,
@@ -229,6 +252,7 @@ import { uploadChatImage } from "@/firebase/storage";
 			)
 		}
 			
+	
 
 		return (
 			
@@ -261,13 +285,19 @@ import { uploadChatImage } from "@/firebase/storage";
 						minInputToolbarHeight={50}
 						renderDay={renderCustomDay}
 						renderMessageImage={renderCustomMessageImage}
+						// renderChatFooter={} //MessageContainer 아래에 렌더링할 사용자 정의 구성 요소(ListView와 별도)
+						// renderInputToolbar={} //사용자 정의 메시지 작성기 컨테이너
+						isScrollToBottomEnabled={true} // 메시지 최하단으로 이동하는 버튼
+						showAvatarForEveryMessage={true}
+						renderAvatarOnTop={true}
+						onLongPress={() => console.log('cje')}
 					/>
 					
 					<BottomSheet
 						ref={bottomSheetRef}
-						index={1}
+						index={-1}
 						snapPoints={snapPoints}
-						enablePanDownToClose={true} // 
+						enablePanDownToClose={true} 
 						keyboardBehavior="interactive"
 						enableContentPanningGesture={false}
 						// onChange={handleSheetCloseChanges}

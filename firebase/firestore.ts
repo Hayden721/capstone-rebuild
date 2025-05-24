@@ -179,7 +179,8 @@ export const subscribeToMessages = (chatroomId: string, callback:(message: any) 
 				_id: data._id,
 				text: data.text,
 				createdAt: data.createdAt?.toDate?.() ?? new Date(),
-				user: data.user
+				user: data.user,
+        image: data.image
 			}
 		});
     callback(messages);

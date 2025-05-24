@@ -18,8 +18,15 @@ export const firebaseSignUp = async (email: string, password: string) => {
     const user = userCredential.user;
 
     if(user) {
+      const defaultPhtoURL = "https://firebasestorage.googleapis.com/v0/b/micro-vine-456511-c5.firebasestorage.app/o/profile%2Fuser.png?alt=media&token=bec2f861-41c2-4c93-aabd-2521cd55e177";
+      // 기본 프로필 이미지 회원가입 시 즉시 업데이트
+      await updateProfile(user, {
+        photoURL: defaultPhtoURL,
+      })
+      // 이메일 인증 전송
       await sendEmailVerification(user);
       console.log("이메일 전송 완료");
+
       await auth.signOut();
       return true;
     }
