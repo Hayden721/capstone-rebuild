@@ -2,6 +2,7 @@
 
 export const validateEmail = (email: string) => {
   const regex = /^[a-zA-Z0-9._%+-]+@o\.shinhan\.ac\.kr$/;
+  console.log(regex.test(email));
   return regex.test(email);
 }
 

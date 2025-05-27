@@ -17,6 +17,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.capstonerebuild"
     },
+    
     "android": {
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
@@ -27,10 +28,6 @@
         "android.permission.RECORD_AUDIO"
       ],
       "package": "com.anonymous.capstonerebuild"
-    },
-    "androidNavigationBar": {
-      "barStyle": "light-content",
-      "backgroundColor": "#000000"
     },
     "web": {
       "bundler": "metro",

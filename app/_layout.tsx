@@ -4,7 +4,7 @@ import { Redirect, Slot, Stack, useRouter, usePathname, useSegments } from 'expo
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
-import { TamaguiProvider, Theme } from '@tamagui/core'
+import { TamaguiProvider, Theme, useTheme } from '@tamagui/core'
 import { tamaguiConfig } from '../tamagui.config';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar, Modal } from 'react-native'
@@ -12,7 +12,7 @@ import { useAuth } from '../hooks/useAuth';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { useThemeContext } from '../hooks/useThemeContext';
 import { AuthProvider } from '../contexts/AuthContext';
-
+import * as NavigationBar from 'expo-navigation-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 // root 레이아웃 (최상위 레이아웃)
 
@@ -25,6 +25,7 @@ export {
 } from 'expo-router';
 
 export default function RootLayout() {
+
   // 폰트 로딩
   const [loaded, error] = useFonts({
     NotoSans: require('../assets/fonts/NotoSansKR-VariableFont_wght.ttf'),
@@ -50,6 +51,15 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   console.log("로그인 상태 : ", user);
   const segments = useSegments();
   const pathname = usePathname();
+  
+  // 안드로이드 제스처 바 테마에 따라 색 변경
+  useEffect(() => {
+    // 배경 색상 변경
+    NavigationBar.setBackgroundColorAsync(themeMode === 'dark' ? 'hsla(0, 7%, 1%, 1)' : 'hsla(0, 7%, 97%, 1)' ); // 검정색으로 설정
+    // 아이콘 스타일 설정 (light | dark)
+    NavigationBar.setButtonStyleAsync(themeMode);
+  }, [themeMode]);
+  
 
   // 개발할 떄만 사용 (스크린 고정할 때 사용)
   const [isLayoutMounted, setIsLayoutMounted] = useState(false);
@@ -74,6 +84,10 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           // if(pathname !== '/chat/9K80RQakI7AKYw4Jdy88/chatroom') {
           //   router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');
           // }
+
+          if(pathname !== '/chat/QNxk13JIXP4SfQJvYeBj/preview') {
+            router.replace('/chat/QNxk13JIXP4SfQJvYeBj/preview');
+          }
           console.log("현재 경로 : ", pathname);
         }, 100);
         
@@ -106,11 +120,14 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
       }
     }
   }, [user, loading, loaded, segments]);
+
+
   // 배포할 때 사용  -------------------------
   if (loading || !loaded) return null; // 로딩이 되지 않았으면 렌더링 하지 않는다.
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      
       <SafeAreaProvider>
         <TamaguiProvider config={tamaguiConfig} defaultTheme={themeMode}>
           
@@ -119,6 +136,7 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
             translucent
             backgroundColor="transparent"
           />
+          
 
           <Stack screenOptions={{ 
             headerShown: false,

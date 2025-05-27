@@ -3,14 +3,12 @@ import { Camera } from "@tamagui/lucide-icons";
 import React, { useEffect, useState } from "react";
 import { View, ScrollView, TouchableOpacity, StyleSheet, Pressable, Alert } from "react-native";
 import { Avatar, H1, H2, useTheme, YStack, Text, XStack, H3, H4, H5, H6, Switch, Spinner } from "tamagui";
-import { firebaseDeleteAccount, firebaseLogout, firebaseUpdateProfileImage, updateProfileImage } from "@/firebase/auth";
+import { firebaseDeleteAccount, firebaseLogout, updateProfileImage, updateUserPhotoURL } from "@/firebase/auth";
 import { useRouter } from "expo-router";
 import { ThemeToggleButton } from "@/components/ThemeToggle";
 import pickImage from '@/utils/imagePicker'; // 이미지 픽커
 import { useAuth } from "@/hooks/useAuth";
-
 import { Modal } from "react-native";
-import { getAuth } from "firebase/auth";
 import { auth } from '@/firebase';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,31 +23,32 @@ export default function My() {
 	const [userImgLoading, setUserImgLoading] = useState(false); // 이미지 업로드 로딩 상태
 	
 
-	useEffect(() => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-      setProfileImage(user.photoURL); // 초기 이미지 설정
-    }
-  }, []);
-
+useEffect(() => {
+  const user = auth.currentUser;
+  if (user?.photoURL) {
+    setProfileImage(user.photoURL); // 초기 이미지 설정
+  }
+}, []);
 
 const handleUpdateProfileImage = async () => {
   setUserImgLoading(true);
   try {
     const picked = await pickImage({ maxImages: 1 });
-    if (picked && picked.length > 0) {
-      const updateUser = await updateProfileImage(picked[0]);
-      setProfileImage(updateUser.photoUrl);
 
+    if (picked && picked.length > 0) {
+			// 이미지 업데이트 (return : name, email, photoURL)
+      await updateProfileImage(picked[0]);
+			
       // Firebase Auth의 currentUser 새로고침
       await auth.currentUser?.reload();
       const refreshedUser = auth.currentUser;
 
-      //  상태 업데이트
+      // firebase auth 상태 업데이트
       if (refreshedUser) {
         setUser(refreshedUser); // useAuth 상태 업데이트
         setProfileImage(`${refreshedUser.photoURL}?t=${Date.now()}`);
+
+				await updateUserPhotoURL(refreshedUser.uid, refreshedUser.photoURL);
 
         // AsyncStorage 업데이트
         try {

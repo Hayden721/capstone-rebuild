@@ -19,6 +19,7 @@ export default function BottomTabLayout() {
       tabBarStyle: { // 탭 바 스타일
         backgroundColor: theme.color1.val, // 탭 배경 색상
         borderTopWidth: 0, // 탭 위 선 없애기
+        elevation: 0
       },
       headerStyle: { // 헤더 스타일
         backgroundColor: theme.color1.val,  // 헤더 배경 색상 

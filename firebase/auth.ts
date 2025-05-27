@@ -3,43 +3,66 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
   getAuth, deleteUser,
   updateProfile
 } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { Alert } from 'react-native';
 import { uploadProfileImageAsync } from '@/firebase/storage';
-
-
-
+import { signupProps } from '@/type/authType';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 
 // 회원가입
-export const firebaseSignUp = async (email: string, password: string) => {
+export const firebaseSignUp = async (email: string, password: string): Promise<signupProps> => {
   try {
     // 회원가입 자격 부여
+    const defaultPhotoURL = "https://firebasestorage.googleapis.com/v0/b/micro-vine-456511-c5.firebasestorage.app/o/profile%2Fuser.png?alt=media&token=bec2f861-41c2-4c93-aabd-2521cd55e177";
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    if(user) {
-      const defaultPhtoURL = "https://firebasestorage.googleapis.com/v0/b/micro-vine-456511-c5.firebasestorage.app/o/profile%2Fuser.png?alt=media&token=bec2f861-41c2-4c93-aabd-2521cd55e177";
-      // 기본 프로필 이미지 회원가입 시 즉시 업데이트
-      await updateProfile(user, {
-        photoURL: defaultPhtoURL,
-      })
-      // 이메일 인증 전송
-      await sendEmailVerification(user);
-      console.log("이메일 전송 완료");
+    if(!user) {
+      throw new Error("회원가입 실패: 유저 정보가 없습니다.");
+    }
 
-      await auth.signOut();
-      return true;
+    // 기본 프로필 이미지 회원가입 시 즉시 업데이트
+    await updateProfile(user, {
+      photoURL: defaultPhotoURL,
+    });
+    // 이메일 인증 전송
+    await sendEmailVerification(user);
+    console.log("이메일 전송 완료");
+
+    
+    return {
+      uid: user.uid,
+      email: user.email!, // 타입 단언: string
+      photoURL: user.photoURL! // 타입 단언: string
     }
+    
   } catch(error: any) {
-    if(error.code === "auth/invalid-email") {
-      console.error("이미 가입된 이메일입니다.");
-      Alert.alert("이미 가입된 이메일입니다.");
-    }else {
-      console.log("회원가입 실패", error);
-    }
+    console.error("회원가입 중 오류 발생:", error);
+    throw error;
+
   }
-  return false;
+};
+
+// 회원가입 시 유저 정보 firestore에 저장
+export const saveUserToFirestore = async (userData: signupProps) => {
+  try{
+    console.log("saveUserToFirestore", userData);
+    const userDoc = {
+      uid: userData.uid,
+      email: userData.email,
+      photoURL: userData.photoURL,
+    }
+    // 문서 아이디를 정해서 저장하기
+    await setDoc(doc(db, "users", userData.uid), userDoc);
+    await auth.signOut();
+    console.log("Firestore 유저 정보 저장 성공")
+  } catch(e) {
+    console.error("firestore에 유저 정보 저장 실패 : ", e);
+  }
+  
 }
+
+
 
 // 파이어베이스 로그인
 export const firebaseLogin = async (email: string, password: string) => {  
@@ -104,12 +127,23 @@ export const firebaseUpdateProfileImage = async ( imageUrl: string ) => {
   })
 }
 
+//파이어스토어 user컬렉션에 유저 photoURL을 업데이트
+export const updateUserPhotoURL = async (uid: string, photoURL: string|null) => {
+  try {
+    const userDocRef = doc(db, 'users', uid);
+    await updateDoc(userDocRef, {photoURL});
+    console.log("firebase user photoURL 업데이트 성공 ");
+  } catch(error) {
+    console.log("firebase user photoURL 업데이트 실패 : ", error);
+  }
+}
+
 // 파이어베이스 Authentication 프로필 이미지 조회
 export const getFirebaseProfileImage = (): string|null => {
   const user = auth.currentUser;
   return user?.photoURL ?? null;
 }
-
+// 유저의 프로필 이미지 변경
 export const updateProfileImage = async (localImage: string): Promise<{
   name: string|null;
   email: string|null;
@@ -118,9 +152,12 @@ export const updateProfileImage = async (localImage: string): Promise<{
   const auth = getAuth();
   const user = auth.currentUser;
   if (!user) throw new Error("로그인된 사용자가 없습니다.");
-  const downLoadURL = await uploadProfileImageAsync(localImage, user.uid);
+  // 이미지를 firebase storage에 업로드 (return : 업로드한 이미지의 URL)
+  const downLoadURL = await uploadProfileImageAsync(localImage, user.uid); 
   
+  // 유저의 Authentication 업데이트
   await updateProfile(user, {photoURL: downLoadURL});
+
   return {
     name: user.displayName,
     email: user.email,

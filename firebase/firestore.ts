@@ -10,7 +10,7 @@ import { IMessage } from 'react-native-gifted-chat';
 import { uploadChatroomImage } from './storage';
 import { toDate } from '../node_modules/date-fns/fp/toDate';
 
-// 회원가입
+
 
 let lastVisible: QueryDocumentSnapshot<DocumentData> | null = null;
 
