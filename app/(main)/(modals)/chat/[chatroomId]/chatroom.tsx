@@ -14,7 +14,7 @@ import { ChatMenuButton } from "@/components/chat/chatMenuButton";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { pickImage } from "@/utils/imagePicker";
 import { uploadChatImage } from "@/firebase/storage";
-import Lightbox from "react-native-lightbox-v2";
+import Lightbox from "react-native-lightbox-v2"; // 이미지 확대 
 
 	export default function ChatRoom() {
 		const theme = useTheme();

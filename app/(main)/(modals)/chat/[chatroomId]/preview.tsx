@@ -46,8 +46,8 @@ export default function ChatPreview() {
 									params: {chatroomId: chatroomId as string}
 								})
 							} catch(e) {
-  							console.error("입장 처리 중 오류 : ", e);
-              	Alert.alert("입장 실패", "채팅방 입장 중 오류가 발생했습니다.");
+								console.error("입장 처리 중 오류 : ", e);
+								Alert.alert("입장 실패", "채팅방 입장 중 오류가 발생했습니다.");
 							}
 							
 						}

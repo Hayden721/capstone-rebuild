@@ -85,9 +85,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           //   router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');
           // }
 
-          if(pathname !== '/chat/QNxk13JIXP4SfQJvYeBj/preview') {
-            router.replace('/chat/QNxk13JIXP4SfQJvYeBj/preview');
-          }
+          // if(pathname !== '/chat/QNxk13JIXP4SfQJvYeBj/preview') {
+          //   router.replace('/chat/QNxk13JIXP4SfQJvYeBj/preview');
+          // }
           console.log("현재 경로 : ", pathname);
         }, 100);
         
