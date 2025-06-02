@@ -7,6 +7,8 @@ import { useState } from 'react';
 import pickImage from '@/utils/imagePicker';
 import { Camera } from '@tamagui/lucide-icons';
 import { createChatroom } from '@/firebase/firestore';
+import { useAuth } from '@/hooks/useAuth';
+import { addUserToChatroom } from '@/firebase/chat';
 
 
 export default function ChatCreateScreen() {
@@ -14,7 +16,9 @@ export default function ChatCreateScreen() {
   const [title, setTitle] = useState(''); // 채팅방 제목
   const [explain, setExplain] = useState(''); // 채팅방 내용
   const [imageUri, setImageUri] = useState<string|null>(null); // 선택한 채팅방 이미지
-  
+  const {user} = useAuth();
+  const userUID = user?.uid as string;
+  const userEmail = user?.email as string;
   const handleImagePicker = async () => {
     const pick = await pickImage({maxImages:1});
     
@@ -30,15 +34,17 @@ export default function ChatCreateScreen() {
     console.log("채팅방 이름 : ", title);
     console.log("채팅방 설명 : ", explain);
     console.log("채팅방 이미지 : ", imageUri);
-    
+    console.log("방 생성자(어드민) : ", user?.uid);
     try{
       // 1. 채팅방 정보를 firestore에 저장
       // 2. 이미지를 storage에 저장하고 이미지 url을 채팅방 firestore에 저장
       // 채팅방 생성 및 이미지 업로드 
-      const catroomId = await createChatroom({title, explain, imageUri});
-      
+      const chatroomId = await createChatroom({title, explain, imageUri, userUID});
+      // chatrooms에 users문서 추가
+      await addUserToChatroom({chatroomId: chatroomId, userUid: userUID, userEmail: userEmail});
+
       //3. 채팅방으로 이동
-      router.replace(`/(main)/(modals)/chat/${catroomId}`);
+      router.replace(`/(main)/(modals)/chat/${chatroomId}/chatroom`);
     }catch(error) {
       console.log(error);
     }

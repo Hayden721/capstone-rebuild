@@ -21,17 +21,17 @@ const router = useRouter(); // expo-router 사용
     <ScrollView style={{flex:1, backgroundColor: theme.color1.val}}>
       <YStack style={{margin:10}}>
         {/* NOTI: 내가 작성한거 */}
-        <YStack>
+        {/* <YStack>
           
           <BoardList label='내가 쓴 글' screen="/(main)/myPosts" icon={BookText}/>
           <BoardList label='내가 쓴 댓글' screen="/(main)/myComments" icon={BookText}/>
-        </YStack>
+        </YStack> */}
         
         <Divider/>
 
         <YStack>
-        <BoardList label='자유게시판' screen="/(main)/free" icon={BookText}/>
-        <BoardList label='정보게시판' screen="/(main)/info" icon={Lightbulb}/>
+        <BoardList label='자유게시판' screen="/(main)/major/free" icon={BookText}/>
+        <BoardList label='정보게시판' screen="/(main)/major/info" icon={Lightbulb}/>
         </YStack>
 
         <Divider/>

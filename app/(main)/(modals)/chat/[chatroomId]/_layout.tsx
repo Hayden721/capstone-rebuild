@@ -22,6 +22,13 @@ export default function ModalLayout() {
 					animation: 'fade'
 				}}
 			/>
+
+			<Stack.Screen
+				name='menu'
+				options={{
+					presentation: 'card'
+				}}
+			/>
 		</Stack>
 		
 	);

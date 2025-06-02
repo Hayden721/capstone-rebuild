@@ -1,27 +1,29 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, View, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Pressable, StyleSheet, Dimensions, FlatList, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Text, useTheme, XStack, YStack } from "tamagui";
-import { sendMessage, subscribeToMessages } from "@/firebase/firestore";
+import { Text, useTheme, XStack, YStack } from "tamagui";
+import { sendMessage, subscribeToMessages } from "@/firebase/chat";
 import { useAuth } from "@/hooks/useAuth";
 import { ActionsProps, Bubble, Day, GiftedChat, IMessage, MessageImageProps } from "react-native-gifted-chat";
-import { Camera, ImagePlus, Plus, Video, X } from "@tamagui/lucide-icons";
+import { Camera, ImagePlus, Menu, Plus, Video, X } from "@tamagui/lucide-icons";
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop} from '@gorhom/bottom-sheet';
-import { StatusBar, Image } from "react-native";
+import { StatusBar } from "react-native";
 import { ChatMenuButton } from "@/components/chat/chatMenuButton";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { pickImage } from "@/utils/imagePicker";
 import { uploadChatImage } from "@/firebase/storage";
 import Lightbox from "react-native-lightbox-v2"; // 이미지 확대 
-
+import { Image } from 'expo-image';
 	export default function ChatRoom() {
 		const theme = useTheme();
+		const {user} = useAuth();
+		const router = useRouter();
 		const {chatroomId} = useLocalSearchParams<{chatroomId: string}>();
 		const [messages, setMessages] = useState<IMessage[]>([]); // 채팅 데이터
 		const roomId = chatroomId as string;
-		const {user} = useAuth();
+		console.log("chatroomId : ", roomId);
 		const [isUploading, setIsUploading] = useState(false); // 이미지 업로드 상태
 		// 바텀시트
 		const bottomSheetRef = useRef<BottomSheet>(null);
@@ -49,10 +51,12 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 		]
 
 		const selectImage = useCallback(async () => {
+			bottomSheetRef.current?.close();
 			try {
 				const selectedImageUris = await pickImage({maxImages: 1, currentUris: []});
 				if(selectedImageUris && selectedImageUris.length > 0) {
 					await handleImageUpload(selectedImageUris[0]);
+					
 				} 
 				bottomSheetRef.current?.close();
 			}catch (e) {
@@ -65,6 +69,7 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 		const handleImageUpload = useCallback(async(imageUri: string)=> {
 			if(!user) return;
 			setIsUploading(true);
+			bottomSheetRef.current?.close();
 			try {
 				const downloadURL = await uploadChatImage(imageUri, roomId);
 				console.log('이미지 스토어 저장 : ', downloadURL);
@@ -82,14 +87,16 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 				};
 				await sendMessage({
 					chatroomId: roomId,
-					message: imageMessage,
+					giftedMessage: imageMessage,
 				})
 
 			} catch(e) {
 				console.error('이미지 업로드 실패', e);
 				Alert.alert('오류', '이미지 채팅 전송 실패');
 			} finally{
+				
 				setIsUploading(false);
+				
 			}
 
 		},[user, roomId]);
@@ -110,7 +117,7 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 
 		// 배경 터치 시 BottomSheet 닫기
 		const renderBackdrop = useCallback(
-			(props) => (
+			(props: any) => (
 				<BottomSheetBackdrop
 					{...props}
 					appearsOnIndex={0}
@@ -147,7 +154,7 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 				try {
 					await sendMessage({
 						chatroomId: roomId,
-						message,
+						giftedMessage: message,
 					})
 				} catch (e) {
 					console.error("sendMessage error : ", e);
@@ -158,7 +165,7 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 		}, [roomId])
 
 		// 커스텀 버블 스타일 적용
-		const renderBubble = (props) => {
+		const renderBubble = (props:any) => {
 			return (
 				<Bubble
 					{...props}
@@ -194,6 +201,9 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 							fontSize: 10,
 						},
 					}}
+					usernameStyle={{
+						color: theme.color11.val
+					}}
 				/>
 			);
 		};
@@ -208,31 +218,32 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 		
 			return (
 				<View style={{padding:3}}>
-				<Lightbox			
-					swipeToDismiss={true}
-					renderContent={() => (
+					<Lightbox			
+						swipeToDismiss={true}
+						renderContent={() => (
+							<Image
+								source={{ 
+									uri: currentMessage.image,	
+								}}
+								style={{
+									backgroundColor: 'black', width:'100%', height: '100%' 
+									
+								}}
+								contentFit="contain"
+							/>
+						)}
+					>
 						<Image
 							source={{ uri: currentMessage.image }}
-							style={{
-								width: '100%',
-								height: '100%',
-								resizeMode: 'contain',
-								backgroundColor: 'black',
-							}}
+							style={{ width: 200, height: 150, borderRadius: 12 }}
+							contentFit="cover"
 						/>
-					)}
-				>
-					<Image
-						source={{ uri: currentMessage.image }}
-						style={{ width: 200, height: 150, borderRadius: 12 }}
-						resizeMode="cover"
-					/>
-				</Lightbox>
+					</Lightbox>
 				</View>
 			);
 		};
 		// 채팅창 가운데 날짜 커스텀
-		const renderCustomDay = (props) => {
+		const renderCustomDay = (props: any) => {
 			return (
 				<Day
 					{...props}
@@ -252,8 +263,6 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 			)
 		}
 			
-	
-
 		return (
 			
 				<SafeAreaView style={{flex:1, backgroundColor: theme.color2.val}}>
@@ -263,15 +272,18 @@ import Lightbox from "react-native-lightbox-v2"; // 이미지 확대
 						backgroundColor={theme.color2.val}
 					/>
 					<CustomHeader showBackButton={true}>
+						<TouchableOpacity style={{marginRight:10}} onPress={()=>{router.push(`/(main)/(modals)/chat/${roomId}/menu`)}}>
+							<Menu />
+						</TouchableOpacity>
 						
 					</CustomHeader>
 					
 					<GiftedChat
 						messages={messages}
 						onSend={messages => handleSendMessage(messages)}
-						user={{_id: user?.uid ?? '', name: user?.email ?? undefined, avatar: user?.photoURL ?? undefined}}
+						user={{_id: user?.uid ?? '', name: user?.email?.split('@')[0] ?? undefined, avatar: user?.photoURL ?? undefined}}
 						isKeyboardInternallyHandled={true}
-						renderUsernameOnMessage={false}
+						renderUsernameOnMessage={true}
 						renderBubble={renderBubble}
 						alignTop={false}
 						showUserAvatar={false} // 내 아바타 보이게 하기

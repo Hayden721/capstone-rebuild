@@ -41,23 +41,9 @@ export default function BottomTabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: '홈',
-          headerTitle: 'home',
-          
           tabBarIcon: ({ color }) => <Home size={24} color={color}/>,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable style={{ marginRight: 10}}>
-                {({ pressed }) => (
-                  <AlertCircle
-                    size={24}
-                    color="$color12"
-                    style={{ opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          title: '홈',
+          headerShown: false,
         }}
       />
       {/* NOTI : 게시판 상단 탭 */}

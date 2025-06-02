@@ -33,7 +33,7 @@ const handleChatroomAccess = async (item: any) => {
   // 1. firestore /chatrooms/{chatroomId}/users에 내 email과 같은 아이디 있으면 true 반환
   const checkUser = await checkChatroomSubscribeUser({chatroomId: item.id, userUid: user.uid})
   if(checkUser) {
-    router.push(`/(main)/(modals)/chat/[chatroomId]/chatroom`)
+    router.push(`/(main)/(modals)/chat/${item.id}/chatroom`)
   } else {
     router.push(`/(main)/(modals)/chat/${item.id}/preview`)
   }

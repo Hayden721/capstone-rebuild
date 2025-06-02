@@ -121,14 +121,20 @@ export const getComments = async ({ major, postId }: { major: string; postId: st
   });
 };
 // 채팅방 생성
-export const createChatroom = async ({title, explain, imageUri}: {title:string, explain:string, imageUri:string|null}) => {
+export const createChatroom = async ({
+  title, explain, imageUri, userUID
+}: {
+  title:string, explain:string, imageUri:string|null, userUID:string|undefined|null
+}): Promise<string> => {
   
   try{
     // 채팅방 문서 추가 (return 채팅방 id)
     const chatroomRef = await addDoc(collection(db, 'chatrooms'),{
       title, // 채팅방 제목
       explain, // 채팅방 설명
-      createdAt: Timestamp.now() // 채팅방 생성 날짜
+      createdAt: Timestamp.now(), // 채팅방 생성 날짜
+      users: userUID ? [userUID]: [], 
+      admin: userUID ?? ''
     })
     const chatroomId = chatroomRef.id;
     
@@ -145,6 +151,7 @@ export const createChatroom = async ({title, explain, imageUri}: {title:string, 
     
   } catch(error) {
     console.log(error);
+    throw new Error("채팅방 생성 실패"); 
   }
 }
 // 채팅방 리스트 조회
@@ -167,48 +174,4 @@ export const getChatroomList = async () => {
   
 }
 
-// 채팅 메시지 조회 
-export const subscribeToMessages = (chatroomId: string, callback:(message: any) => void) => {
-  const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
-  const q = query(messageRef, orderBy('createdAt', 'desc'));
-  
-  return onSnapshot(q, snapshot => {
-    const messages = snapshot.docs.map((doc) => {
-			const data = doc.data();
-			return {
-				_id: data._id,
-				text: data.text,
-				createdAt: data.createdAt?.toDate?.() ?? new Date(),
-				user: data.user,
-        image: data.image
-			}
-		});
-    callback(messages);
-  });
-}
-// 채팅보내기
-export const sendMessage = async ({chatroomId, message}:{chatroomId:string; message: IMessage;}) => {
-  const {_id, user, text, image} = message;
-  const safeUser = {
-    _id: user._id,
-    name: user.name,
-    ...(user.avatar ? {avatar: user.avatar}: {}) // 아바타 이미지가 없을 때 대비
-  }
-
-	const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
-
-  const baseMessageData = {
-    _id: message._id, // 메시지 id
-    user: safeUser, // 유저 정보
-    text: message.text || '', // message text
-    createdAt: Timestamp.now(),
-  };
-
-  // 이미지가 있는 경우에만 image 필드 추가
-  const messageData = image 
-  ? { ...baseMessageData, image } 
-  : baseMessageData;
-
-	await addDoc(messageRef, messageData)
-}
 

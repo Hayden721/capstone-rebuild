@@ -39,7 +39,6 @@ export const firebaseSignUp = async (email: string, password: string): Promise<s
   } catch(error: any) {
     console.error("회원가입 중 오류 발생:", error);
     throw error;
-
   }
 };
 
