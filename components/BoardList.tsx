@@ -6,7 +6,7 @@ import { Button, Text, XStack } from "tamagui";
 
 // 게시판 리스트
 
-type screenPath = `/(main)/major/${string}` | `/(main)/${string}`;
+type screenPath = `/(modals)/posts/${string}`;
 
 interface BoardListProps {
   label: string;
@@ -19,9 +19,9 @@ const router = useRouter();
 
   return (
     <Pressable onPress={() => router.push(screen)}>
-      <XStack alignItems="center" paddingVertical="$2.5">
+      <XStack style={{alignItems: 'center', paddingVertical: 6}}>
         <Icon size={17} />
-        <Text fontSize={17} marginLeft="$2">{label}</Text>
+        <Text fontSize={17} style={{marginLeft: 10}}>{label}</Text>
       </XStack>
     </Pressable>
     

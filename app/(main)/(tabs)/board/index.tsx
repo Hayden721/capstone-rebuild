@@ -21,25 +21,24 @@ const router = useRouter(); // expo-router 사용
     <ScrollView style={{flex:1, backgroundColor: theme.color1.val}}>
       <YStack style={{margin:10}}>
         {/* NOTI: 내가 작성한거 */}
-        {/* <YStack>
-          
-          <BoardList label='내가 쓴 글' screen="/(main)/myPosts" icon={BookText}/>
-          <BoardList label='내가 쓴 댓글' screen="/(main)/myComments" icon={BookText}/>
-        </YStack> */}
+        <YStack>
+          <BoardList label='내가 쓴 글' screen="/(modals)/posts/myPosts" icon={BookText}/>
+          <BoardList label='내가 쓴 댓글' screen="/(modals)/posts/myComments" icon={BookText}/>
+        </YStack>
         
         <Divider/>
 
         <YStack>
-        <BoardList label='자유게시판' screen="/(main)/major/free" icon={BookText}/>
-        <BoardList label='정보게시판' screen="/(main)/major/info" icon={Lightbulb}/>
+        <BoardList label='자유게시판' screen="/(modals)/posts/free" icon={BookText}/>
+        <BoardList label='정보게시판' screen="/(modals)/posts/free" icon={Lightbulb}/>
         </YStack>
 
         <Divider/>
         
         <YStack> 
           <H5>전공 게시판</H5>
-          <BoardList label='컴퓨터공학' screen="/(main)/major/com" icon={Code2}/>
-          <BoardList label='전자공학' screen="/(main)/major/elec" icon={CircuitBoard}/>
+          <BoardList label='컴퓨터공학' screen="/(modals)/posts/com" icon={Code2}/>
+          <BoardList label='전자공학' screen="/(modals)/posts/elec" icon={CircuitBoard}/>
         </YStack>
 
         <Divider/>

@@ -2,7 +2,6 @@ import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, onSnapshot, order
 import { auth, db } from '../firebase';
 import { chatUserCheckProps, enterChatroomProps, sendMessageProps } from '@/type/chatType';
 
-
 // 채팅보내기
 // export const sendMessage = async ({chatroomId, message}:{chatroomId:string, message: IMessage}) => {
 //   const {_id, user, text, image} = message;
@@ -29,14 +28,79 @@ import { chatUserCheckProps, enterChatroomProps, sendMessageProps } from '@/type
 // 	await addDoc(messageRef, messageData)
 // }
 
+// 채팅 전송
+/**
+ * 채팅 전송
+ * @param param0 - chatroomId: 채팅방 id, giftedMessage: 채팅 메시지 데이터
+ */
+// export const sendMessage = async({chatroomId, giftedMessage}:sendMessageProps ) => {
+// 	const image = giftedMessage.image;
+// 	const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
+// 	// firestore에 저장할 데이터 (_id: 메시지 id 값, text: 메시지, user: , createdAt: 메시지 작성일)
+// 	const defalutChatData = {
+// 		_id: giftedMessage._id,
+// 		text: giftedMessage.text,
+// 		user: giftedMessage.user,
+// 		createdAt: Timestamp.now(),
+		
+// 	}
+// 	// 이미지 채팅일 경우
+// 	const chatData = image 
+//   ? { ...defalutChatData, image } 
+//   : defalutChatData;
+
+// 	await addDoc(messageRef, chatData);
+// }
+
+// 채팅방 참여 유저 캐시에 넣어서 사용
+export const fetchChatUserInCache = async (chatroomId: string) => {
+	// 유저 캐시 데이터 담을 곳
+	const userCache: Record<string, any> = {};
+
+	try {
+		// 1. chatroom/user에서 채팅방에서 존재하는 userUID 조회하기
+		const chatroomDoc = await getDoc(doc(db, "chatrooms", chatroomId));
+		// 문서가 존재하지 않으면 return
+		if(!chatroomDoc.exists()) {
+			console.warn('chatroom/${chatroomId}에 문서가 존재하지 않음');
+			return {};
+		}
+		const userUID = chatroomDoc.data().users;
+		console.log("캐시 userUID : ",  userUID); // 일단 uid 가지고 옴
+		// 2. userUID를 사용해서 /users/{userUID}의 데이터를 map 형식에 저장
+		await Promise.all(
+			userUID.map(async (uid: string) => {
+				try{
+					const userDoc = await getDoc(doc(db, "users", uid));
+					if(userDoc.exists()) {
+						const data = userDoc.data();
+						userCache[uid] = {
+							email: data.email,
+							photoURL: data.photoURL
+						}
+					}
+				}catch(e) {
+					console.error('유저 정보 조회 실패 : ', e);
+				}
+			})
+		)
+		console.log("userCache에 저장됨 : ", userCache);
+		return userCache;
+	} catch(e) {
+		console.error(e);
+		return {};
+	}
+}
+
+// 매시지 보내기
 export const sendMessage = async({chatroomId, giftedMessage}:sendMessageProps ) => {
 	const image = giftedMessage.image;
 	const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
 	// firestore에 저장할 데이터 (_id: 메시지 id 값, text: 메시지, user: , createdAt: 메시지 작성일)
 	const defalutChatData = {
 		_id: giftedMessage._id,
+		user: giftedMessage.user,// 유저의 uid만 사용
 		text: giftedMessage.text,
-		user: giftedMessage.user,
 		createdAt: Timestamp.now(),
 	}
 	// 이미지 채팅일 경우
@@ -44,12 +108,15 @@ export const sendMessage = async({chatroomId, giftedMessage}:sendMessageProps ) 
   ? { ...defalutChatData, image } 
   : defalutChatData;
 
-
 	await addDoc(messageRef, chatData);
-}
+} 
 
-
-// 채팅 메시지 조회 
+/**
+ * 채팅 메시지 조회 
+ * @param chatroomId - 채팅방 id
+ * @param callback - 
+ * @returns 
+ */
 export const subscribeToMessages = (chatroomId: string, callback:(message: any) => void) => {
   const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
   const q = query(messageRef, orderBy('createdAt', 'desc'));
@@ -69,7 +136,10 @@ export const subscribeToMessages = (chatroomId: string, callback:(message: any) 
   });
 }
 
-
+/**
+ * firestore에 /chatrooms/{chatroomId}/users/{userUID}문서에 userUid를 문서명으로 사용하고 유저 데이터 추가
+ * @param param0 - chatroomId: 채팅방ID, uesrUid: user의 uid값, userEmail: 유저의 이메일 
+ */
 export const addUserToChatroom = async ({chatroomId, userUid, userEmail}: enterChatroomProps) => {
 
 	try {
@@ -84,6 +154,12 @@ export const addUserToChatroom = async ({chatroomId, userUid, userEmail}: enterC
 		console.error("채팅방에 유저 추가 실패 : ", e);
 	}
 }
+
+/**
+ * firestore에 /chatrooms/{chatroomId}문서에 users 필드에서 users 배열에 추가
+ * @param chatroomId - 채팅방 id
+ * @param userUID - 유저 id 
+ */
 export const enterUserToChatroom = async (chatroomId: string, userUID: string) => {
 	try {
 		const chatroomRef = doc(db, "chatrooms", chatroomId);
@@ -97,7 +173,12 @@ export const enterUserToChatroom = async (chatroomId: string, userUID: string) =
 	}
 }
 
-// 채팅방 구독 유저 확인
+// 
+/**
+ * 채팅방 구독 유저 확인
+ * @param param0 - chatroomId: 채팅방id, userUid: 유저uid
+ * @returns 채팅방에 구독된 유저면 true or false
+ */
 export const checkChatroomSubscribeUser = async ({chatroomId, userUid}:chatUserCheckProps): Promise<boolean> => {
 	try {
 		const userDocRef = doc(db, "chatrooms", chatroomId, "users", userUid);
@@ -110,6 +191,11 @@ export const checkChatroomSubscribeUser = async ({chatroomId, userUid}:chatUserC
 	}
 }
 
+/**
+ * 
+ * @param chatroomId - 채팅방 id
+ * @returns 
+ */
 export const getChatSubscribeUser = async (chatroomId: string)=> {
 	// 1. chatrooms에 참가중인 users 데이터 가지고 오기
 	// user의 전체 데이터 (/chatrooms/{chatroomId}/users)
@@ -141,15 +227,24 @@ export const getChatSubscribeUser = async (chatroomId: string)=> {
 	
 	return chatUsers;
 }
-// 내가 참가중인 채팅방 조회
-// export const getMyChatrooms = async (userUID: string) => {
-// 	// 내 email을 통해 chatrooms/[문서]/users/{userUID}에서 select
-// 	// 1. 채팅방 전체를 조회
-// 	const myChatroomsSnapshot = await getDocs(collection(db, "chatrooms"));
-// 	// 2. 내가 참가중인 채팅방 데이터를 담을 배열 생성
-// 	const myChatrooms = [];
-// 	// 3. for문을 통해 전체 채팅방 중에서 내가 포함된 채팅방만 추출해서 myChatrooms 배열에 추가
-// 	for(const chatroom of myChatroomsSnapshot.docs) {
-// 		const userRef = doc(db, "chatrooms", chatroom.id, "users", myUid)
-// 	}
-// }
+// 채팅방을 구독하고 있는 유저 email, photoURL 조회
+// uid값을 활용해서 email과 photoURL 가지고 오기
+export const getChatroomSubscribeUser = async(chatroomId: string) => {
+	try{
+		const subscribeUserRef = doc(db, "chatrooms", chatroomId);
+		const docSnap = await getDoc(subscribeUserRef);
+
+		if(docSnap.exists()) {
+			const data = docSnap.data();
+			
+			const users: string[] = data.users || [];
+			console.log("user배열 : ", users);
+			
+
+		} else {
+			return [];
+		}
+	} catch(e) {
+		console.error("chatrooms users 배열 데이터 가져오기 실패 : ", e);
+	}
+}

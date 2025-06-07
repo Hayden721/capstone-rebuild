@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, View, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Pressable, StyleSheet, Dimensions, FlatList, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, useTheme, XStack, YStack } from "tamagui";
-import { sendMessage, subscribeToMessages } from "@/firebase/chat";
+import { fetchChatUserInCache, sendMessage, subscribeToMessages } from "@/firebase/chat";
 import { useAuth } from "@/hooks/useAuth";
 import { ActionsProps, Bubble, Day, GiftedChat, IMessage, MessageImageProps } from "react-native-gifted-chat";
 import { Camera, ImagePlus, Menu, Plus, Video, X } from "@tamagui/lucide-icons";
@@ -49,7 +49,46 @@ import { Image } from 'expo-image';
 				onPress: ()=> console.log('2'),
 			},
 		]
+		// 캨싱 로딩
+		const [cacheLoading, setCacheLoading] = useState(false);
+		// 캐싱 사용하기
+		const [userCache, setUserCache] = useState<Record<string, any>>({});
+		// 사용자 photoURL은 캐시에 저장해서 사용하기 (사용자의 프로필 이미지 변경 대비)
+		useEffect(() => {
+			const fetchUsers = async () => {
+				const cache = await fetchChatUserInCache(roomId);
+				console.log("chatroom cache check : ", cache);
+				
+				setUserCache(cache);
+				setCacheLoading(true);
+			}
+			fetchUsers();
+		}, [roomId]);
 
+const handleRenderAvatar = useCallback((props) => {
+  const uid = props.currentMessage?.user._id;
+  const userInfo = userCache[uid];
+	console.log("userInfo cache :" , userInfo);
+  if (!userInfo || !userInfo.photoURL) {
+    // 캐시가 아직 없거나 photoURL 없으면 기본 이미지 혹은 빈 뷰 처리
+    return (
+      <Image
+        source={require('@/assets/images/Chill_guy.jpg')}  // 기본 아바타 이미지 경로
+        style={{ width: 36, height: 36, borderRadius: 18 }}
+      />
+    );
+  }
+
+  return (
+    <Image
+      source={{ uri: userInfo.photoURL }}
+      style={{ width: 36, height: 36, borderRadius: 18 }}
+    />
+  );
+}, [userCache]);
+
+
+		// 이미지 선택
 		const selectImage = useCallback(async () => {
 			bottomSheetRef.current?.close();
 			try {
@@ -109,6 +148,7 @@ import { Image } from 'expo-image';
 			return () => unsubscribe();
 		}, [chatroomId]);
 
+
 		// 바텀 시트 실행 함수
 		const openBottomSheet = () => {
 			console.log("바텀 시트 실행", bottomSheetRef.current);
@@ -131,7 +171,6 @@ import { Image } from 'expo-image';
 
 		//채팅 입력창 왼쪽 버튼
 		const chatLeftButton = (props: ActionsProps) => {
-
 			return (
 				<TouchableOpacity onPress={() => {
 					Keyboard.dismiss();  // 키보드 닫기
@@ -161,7 +200,6 @@ import { Image } from 'expo-image';
 				}
 				
 			})
-
 		}, [roomId])
 
 		// 커스텀 버블 스타일 적용
@@ -277,11 +315,13 @@ import { Image } from 'expo-image';
 						</TouchableOpacity>
 						
 					</CustomHeader>
-					
-					<GiftedChat
+					{cacheLoading && (
+						<GiftedChat
 						messages={messages}
 						onSend={messages => handleSendMessage(messages)}
-						user={{_id: user?.uid ?? '', name: user?.email?.split('@')[0] ?? undefined, avatar: user?.photoURL ?? undefined}}
+						user={{_id: user?.uid ?? '', name: user?.email?.split('@')[0] ?? undefined}}
+						renderAvatar={handleRenderAvatar}
+						
 						isKeyboardInternallyHandled={true}
 						renderUsernameOnMessage={true}
 						renderBubble={renderBubble}
@@ -304,6 +344,8 @@ import { Image } from 'expo-image';
 						renderAvatarOnTop={true}
 						onLongPress={() => console.log('cje')}
 					/>
+					)}
+					
 					
 					<BottomSheet
 						ref={bottomSheetRef}

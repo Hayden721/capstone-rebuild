@@ -17,7 +17,7 @@ const theme = useTheme;
     <View flex={1} backgroundColor="$background">
       <YStack>
         <XStack>
-          <Text>job</Text>
+          <Text>job1</Text>
         </XStack>
       </YStack>
     </View>

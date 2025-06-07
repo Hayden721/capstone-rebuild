@@ -14,9 +14,10 @@ export interface postProps {
 export interface postUploadProps {
   title: string;
   content: string;
-  imageUrls: string[];
-  major: string;
-  userId: string;
+  imageURLs: string[];
+  category: string;
+  userUID: string;
+  email: string;
 }
 
 

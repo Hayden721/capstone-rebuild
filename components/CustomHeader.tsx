@@ -2,6 +2,7 @@ import { useTheme, XStack, Text, ColorTokens } from "tamagui";
 
 import BackScreenButton from "./BackScreenButton";
 import { Platform, StyleSheet } from 'react-native';
+import { useLocalSearchParams } from "expo-router";
 
 type CustomHeaderProps = {
   title?: string;
@@ -11,6 +12,7 @@ type CustomHeaderProps = {
 }
 // 커스텀 헤더
 export const CustomHeader = ({title, showBackButton = true, children}: CustomHeaderProps) => {
+  
   const theme = useTheme();
 
   return (

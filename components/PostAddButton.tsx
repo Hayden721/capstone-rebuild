@@ -4,9 +4,9 @@ import { Plus } from "@tamagui/lucide-icons"
 import { router, useLocalSearchParams } from "expo-router"
 
 
-const FixedAddButton: React.FC = () => {
+const PostAddButton: React.FC = () => {
 
-  const { major } = useLocalSearchParams();
+  const { category } = useLocalSearchParams<{category: string}>();
   const theme = useTheme();
   return (
   <Button 
@@ -18,11 +18,11 @@ const FixedAddButton: React.FC = () => {
     size="$6" 
     icon={<Plus size={25} />}
     onPress={() => {
-      router.push(`./${major}/write`);
+      router.push(`/posts/${category}/write`);
     }}
     >
   </Button>
   )
 }
 
-export default FixedAddButton;
+export default PostAddButton;

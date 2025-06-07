@@ -1,5 +1,3 @@
-
-
 const majorTitleMap: Record<string, string> = {
   free: '자유',
   info: '정보',

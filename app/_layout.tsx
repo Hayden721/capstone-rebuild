@@ -53,12 +53,12 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   const pathname = usePathname();
   
   // 안드로이드 제스처 바 테마에 따라 색 변경
-  useEffect(() => {
-    // 배경 색상 변경
-    NavigationBar.setBackgroundColorAsync(themeMode === 'dark' ? 'hsla(0, 7%, 1%, 1)' : 'hsla(0, 7%, 97%, 1)' ); // 검정색으로 설정
-    // 아이콘 스타일 설정 (light | dark)
-    NavigationBar.setButtonStyleAsync(themeMode);
-  }, [themeMode]);
+  // useEffect(() => {
+  //   // 배경 색상 변경
+  //   NavigationBar.setBackgroundColorAsync(themeMode === 'dark' ? 'hsla(0, 7%, 1%, 1)' : 'hsla(0, 7%, 97%, 1)' ); // 검정색으로 설정
+  //   // 아이콘 스타일 설정 (light | dark)
+  //   NavigationBar.setButtonStyleAsync(themeMode);
+  // }, [themeMode]);
   
 
   // 개발할 떄만 사용 (스크린 고정할 때 사용)
@@ -88,6 +88,12 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           // if(pathname !== '/chat/QNxk13JIXP4SfQJvYeBj/preview') {
           //   router.replace('/chat/QNxk13JIXP4SfQJvYeBj/preview');
           // }
+          
+
+          // if(pathname !== '/posts/free/write') {
+          //   router.replace('/posts/free/write');
+          // }
+
           console.log("현재 경로 : ", pathname);
         }, 100);
         

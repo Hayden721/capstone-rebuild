@@ -3,6 +3,7 @@ import { IMessage } from "react-native-gifted-chat";
 export interface sendMessageProps {
 	chatroomId: string;
 	giftedMessage: IMessage;
+
 }
 
 export interface enterChatroomProps {

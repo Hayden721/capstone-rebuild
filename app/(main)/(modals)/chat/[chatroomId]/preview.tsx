@@ -1,4 +1,4 @@
-import { addUserToChatroom } from "@/firebase/chat";
+import { addUserToChatroom, enterUserToChatroom } from "@/firebase/chat";
 import { useAuth } from "@/hooks/useAuth";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { X } from "@tamagui/lucide-icons";
@@ -40,6 +40,9 @@ export default function ChatPreview() {
 						if(user?.uid && user.email){
 
 							try{
+								// 1. 채팅방 문서에 users에 userUID를 배열에 추가하는 함수
+								await enterUserToChatroom(chatroom, user.uid);
+								// 2. 유저 정보를 저장
 								await addUserToChatroom({chatroomId: chatroom, userUid:user?.uid, userEmail: user?.email});
 								router.replace({
 									pathname: "/(main)/(modals)/chat/[chatroomId]/chatroom",

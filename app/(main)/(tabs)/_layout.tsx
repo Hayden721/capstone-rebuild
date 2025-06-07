@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Platform, Pressable } from 'react-native';
 import { Home, Clipboard, AlertCircle, MessageCircle, User } from '@tamagui/lucide-icons' // Tamagui용 아이콘
 import { useTheme } from 'tamagui';
 
@@ -15,11 +15,13 @@ export default function BottomTabLayout() {
     
     <Tabs
     screenOptions={{
+      headerShown: false,
       tabBarActiveTintColor: theme.accent1.val,  // 바텀 탭 선택시 강조 색상
       tabBarStyle: { // 탭 바 스타일
         backgroundColor: theme.color1.val, // 탭 배경 색상
         borderTopWidth: 0, // 탭 위 선 없애기
-        elevation: 0
+        elevation: 0,
+        paddingBottom: Platform.OS === 'android' ? 5 : 20, // 소프트 네비바 피하기 위해
       },
       headerStyle: { // 헤더 스타일
         backgroundColor: theme.color1.val,  // 헤더 배경 색상 
@@ -76,7 +78,6 @@ export default function BottomTabLayout() {
           
         }}
       />
-
     </Tabs>
   );
 }

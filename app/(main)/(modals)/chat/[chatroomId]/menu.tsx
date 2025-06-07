@@ -1,5 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader"
-import { getChatSubscribeUser } from "@/firebase/chat";
+import { getChatroomSubscribeUser, getChatSubscribeUser } from "@/firebase/chat";
 import { X } from "@tamagui/lucide-icons"
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router"
@@ -25,14 +25,21 @@ export default function ChatMenu () {
 		fetchUsers();
 	}, [chatroomId]);
 
+	useEffect( ()=> {
+		const fetchChatroomUsers = async() => {
+			const users = await getChatroomSubscribeUser(chatroomId);
+		}
+		fetchChatroomUsers();
+	}, [chatroomId]);
+
 	return (
 		
-		<SafeAreaView style={{backgroundColor: theme.color2.val, flex:1, padding: 10}}>
+		<SafeAreaView style={{backgroundColor: theme.color2.val, flex:1}}>
 			<CustomHeader showBackButton={true}>
 				
 			</CustomHeader>
 			
-			<ScrollView style={{flex:1}}>
+			<ScrollView style={{flex:1, padding: 10}}>
 				<YStack style={{flex: 1, justifyContent:"center", alignItems:'center', marginBottom:12}}>
 					<H6>채팅방 제목</H6>
 					<Image style={{width:100, height:100, borderRadius: 10}} source={require('@/assets/images/Chill_guy.jpg')}/>
@@ -43,7 +50,7 @@ export default function ChatMenu () {
 					</View>
 
 					{enteredUsers.map((user) => (
-						<XStack key={user.uid} style={{alignItems:'center'}}>
+						<XStack key={user.uid} style={{alignItems:'center', marginBottom: 3}}>
 							<Avatar>
 								<Avatar.Image src={user.photoURL} style={{width:40, height:40, borderRadius: 10}}/>
 							</Avatar>
@@ -53,6 +60,16 @@ export default function ChatMenu () {
 
 					
 				</YStack>
+				
+				<View style={{marginTop: 5, marginBottom: 5}}></View>
+
+				<YStack style={{backgroundColor: theme.color4.val, padding: 10, borderRadius:10}}>
+					<TouchableOpacity >
+						<Text color={'red'}>채팅방 나가기</Text>
+					</TouchableOpacity>
+				</YStack>
+
+				
 			</ScrollView>
 			
 		</SafeAreaView>
