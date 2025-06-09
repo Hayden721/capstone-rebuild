@@ -9,27 +9,6 @@ import { uploadChatroomImage } from './storage';
 
 
 
-// 댓글 조회
-export const getComments = async ({ major, postId }: { major: string; postId: string }) => {
-  const q = query(
-    collection(db, major, postId, "comments"),
-    orderBy("createdAt", "asc")
-  );
-  const snapshot = await getDocs(q);
-  
-  return snapshot.docs.map((doc) => {
-    const data = doc.data();
-    console.log("data data : ", data);
-    const createdAt = (data.createdAt as Timestamp).toDate();
-    console.log("firebase createdAt : ", createdAt);
-    return {
-      commentId: doc.id,
-      content: data.content,
-      userId: data.userId,
-      createdAt: createdAt
-    };
-  });
-};
 // 채팅방 생성
 export const createChatroom = async ({
   title, explain, imageUri, userUID

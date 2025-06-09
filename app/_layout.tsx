@@ -90,9 +90,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           // }
           
 
-          // if(pathname !== '/posts/free/write') {
-          //   router.replace('/posts/free/write');
-          // }
+          if(pathname !== '/posts/free/1FDWQogNH5VH6rA6zlQr') {
+            router.replace('/posts/free/1FDWQogNH5VH6rA6zlQr');
+          }
 
           console.log("현재 경로 : ", pathname);
         }, 100);

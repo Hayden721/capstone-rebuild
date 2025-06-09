@@ -2,7 +2,7 @@
 import { CustomHeader } from '@/components/CustomHeader';
 import Divider from '@/components/Divider';
 import { PostDropDownMenu } from '@/components/PostDropDownMenu';
-import { addComment, getComments } from '@/firebase/firestore';
+import { addComment, getComments, getLikePostCount, getlikePostCount, isPostLiked, likePost, unlikePost } from '@/firebase/posts';
 import { getDetailPost } from '@/firebase/posts';
 import { useAuth } from '@/hooks/useAuth';
 import { getCommentProps, postProps } from '@/type/firebaseType';
@@ -15,74 +15,104 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  H6, Image, Input, useTheme, XStack, YStack, Text
+  H6, Input, useTheme, XStack, YStack, Text
 } from 'tamagui';
+import Lightbox from "react-native-lightbox-v2"; // 이미지 확대 
+import { Image } from 'expo-image';
 
+// 게시글 상세 조회
 export default function detail() {
 const theme = useTheme();
 const { category, postId } = useLocalSearchParams<{category: string, postId: string}>(); // 현재 전공과 게시글 아이디 값
 const [postDetail, setPostDetail] = useState<postProps | null>(null); //게시글 상세 정보
 const [comment, setComment] = useState<string>(''); // 전송할 댓글 데이터  
-const storageAuth = useAuth(); // asyncStroage에 저장된 로그인 정보
-const userId = storageAuth.user?.email;
+const {user} = useAuth(); // asyncStroage에 저장된 로그인 정보
+const userUID = user?.uid as string;
 const [comments, setComments] = useState<getCommentProps[]>([]); // 댓글 배열
 const [commentsLoading, setCommentsLoading] = useState(true); // 댓글 조회 상태 (기본값 true)
+const [isLiked, setIsLiked] = useState(false); // 좋아요를 했는지 확인
+const [likeCount, setLikeCount] = useState<number>(0);
 
-// 게시글 상세 조회
+// 좋아요 반영
+useEffect(()=> {
+  const fetchLikeStatus = async () => {
+    const liked = await isPostLiked(postId, userUID);
+    const count = await getLikePostCount(postId);
+    setIsLiked(liked);
+    setLikeCount(count);
+  }
+  fetchLikeStatus();
+}, [postId, userUID]);
+
+// 상세 조회 데이터
 useEffect(() => {
   const fetchPost = async () => {
-    const post = await getDetailPost(category, postId);
+    const post = await getDetailPost(postId);
     setPostDetail(post);
     console.log("가져온 게시물 데이터 : ", post);
   }
   fetchPost();
 }, [category, postId]);
 
-// 댓글 조회
-// useEffect(() => {
-//   fetchComments();
-// }, [category, postId]);
+//댓글 조회
+useEffect(() => {
+  fetchComments();
+}, [postId]);
 
 // 댓글 조회
-// const fetchComments = async () => {
-//   try{
-//     const fetched = await getComments({categoty, postId});
-//     setComments(fetched);
-//   } catch (error) {
-//     console.log("comment get error : ", error);
-//   } finally {
-//     setCommentsLoading(false);
-//   }
-// }
+const fetchComments = async () => {
+  try{
+    const fetchComment = await getComments(postId);
+    setComments(fetchComment);
+  } catch (error) {
+    console.error("comment get error : ", error);
+  } finally {
+    setCommentsLoading(false);
+  }
+}
 
 // 댓글 달기 함수
-// const handleSubmitComment = () => {
-//   if(!userId) {
-//     console.warn("로그인을 해야 댓글 작성이 가능합니다.");
-//     return  
-//   }
-//   if(!comment.trim()) {
-//     console.log("댓글을 입력하세요");
-//     return
-//   }
-//   addComment({major, postId, comment, userId});
-//   console.log("댓글 : ", comment);
-//   setComment('');
-//   fetchComments();
-// }
+const handleSubmitComment = () => {
+  if(!user?.uid) {
+    console.warn("로그인을 해야 댓글 작성이 가능합니다.");
+    return  
+  }
+  if(!comment.trim()) {
+    console.log("댓글을 입력하세요");
+    return
+  }
+  addComment({postId:postId, comment:comment, userUID:user.uid});
+  console.log("댓글 : ", comment);
+  setComment('');
+  fetchComments();
+}
+
+const handleLike = async () => {
+  console.log("like click");
+  if(isLiked) {
+    await unlikePost(postId, userUID);
+  } else {
+    await likePost(postId, userUID);
+  }
+  const updateLiked = await isPostLiked(postId, userUID);
+  const updateCount = await getLikePostCount(postId);
+  setIsLiked(updateLiked);
+  setLikeCount(updateCount);
+
+}
 
 return (
   (
     <KeyboardAvoidingView
     style={{ flex: 1, backgroundColor: theme.color1.val }}
-    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     keyboardVerticalOffset={Platform.OS === 'ios'? -30 : 0}
     >
       <SafeAreaView style={{ flex: 1 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <>
             <CustomHeader showBackButton={true}>
-              {/* <PostDropDownMenu major={major} postId={postId} /> */}
+              <PostDropDownMenu category={category} postId={postId} postUserUID={postDetail?.userUID} userUID={user?.uid}/>
             </CustomHeader>
 
             <FlatList
@@ -90,17 +120,16 @@ return (
               keyExtractor={(item) => item.commentId}
               contentContainerStyle={{ padding: 10, paddingBottom: 120 }}
               keyboardShouldPersistTaps="handled"
+              // 상세 데이터 부분
               ListHeaderComponent={
                 <>
                   <XStack style={{ backgroundColor: theme.color1.val }}>
                     <Image
-                      source={require('@/assets/images/Chill_guy.jpg')}
-                      width={55}
-                      height={55}
-                      borderRadius={10}
+                      source={{uri: postDetail?.photoURL}}
+                      style={{width:55, height:55, borderRadius:10}}
                     />
                     <View style={{ marginLeft: 7 }}>
-                      <Text style={{ fontSize: 17 }}>{postDetail?.userId}</Text>
+                      <Text style={{ fontSize: 17 }}>{postDetail?.email}</Text>
                       <Text style={{ fontSize: 14 }}>
                         {postDetail?.createdAt
                           ? format(postDetail.createdAt, 'yyyy.MM.dd HH:mm')
@@ -115,13 +144,18 @@ return (
                       {postDetail?.content}
                     </Text>
                   </YStack>
-
+                  
                   <XStack style={{ justifyContent: 'flex-end', marginVertical: 10 }}>
                     <TouchableOpacity
+                      onPress={handleLike}
                       style={{ marginRight: 8, flexDirection: 'row', alignItems: 'center' }}
                     >
-                      <ThumbsUp style={{ marginRight: 3 }} />
-                      <Text fontSize={19}>1</Text>
+                      {isLiked 
+                        ? <ThumbsUp style={{ marginRight: 3}} color={theme.accent1.val} fill={theme.accent1.val} /> 
+                        : <ThumbsUp style={{ marginRight: 3}} fill={theme.color1.val}/>
+                      }
+
+                      <Text marginStart={3} fontSize={19}>{likeCount}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity>
                       <Bookmark />
@@ -131,6 +165,7 @@ return (
                   <Divider />
                 </>
               }
+              // 댓글 부분
               renderItem={({ item }) => (
                 <YStack
                   style={{
@@ -140,12 +175,19 @@ return (
                     marginTop: 8,
                   }}
                 >
-                  <Text>{item.content}</Text>
-                  <Text fontSize={12} color={theme.gray10?.val}>
-                    {item.createdAt instanceof Date
-                      ? format(item.createdAt, 'yyyy.MM.dd HH:mm')
-                      : '날짜 없음'}
-                  </Text>
+                  <XStack>
+                    <Text fontSize={10} color={theme.gray10?.val}>
+                        {item.createdAt instanceof Date
+                        ? format(item.createdAt, 'yyyy.MM.dd HH:mm')
+                        : '날짜 없음'}
+                      </Text>
+                    <YStack>                  
+                      <Text fontSize={15}>{item.content}</Text>
+                      
+                      </YStack>
+                  </XStack>
+
+                    
                 </YStack>
               )}
             />
@@ -173,9 +215,9 @@ return (
                   marginRight: 10,
                 }}
               />
-              {/* <TouchableOpacity onPress={handleSubmitComment}>
+              <TouchableOpacity onPress={handleSubmitComment}>
                 <Send />
-              </TouchableOpacity> */}
+              </TouchableOpacity>
             </XStack>
           </>
         </TouchableWithoutFeedback>

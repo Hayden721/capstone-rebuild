@@ -3,9 +3,11 @@ import {
   startAfter,limit, QueryDocumentSnapshot, DocumentData, doc, getDoc,
   onSnapshot, updateDoc,
 	where,
+	setDoc,
+	deleteDoc,
   } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { commentProps, postUploadProps } from '@/type/firebaseType';
+import { addCommentProps, addPostProps } from '@/type/firebaseType';
 
 let lastVisible: QueryDocumentSnapshot<DocumentData> | null = null;
 
@@ -52,7 +54,7 @@ export const resetPagination = () => {
 }
 
 // 게시글 업로드
-export const uploadPostToFirestore = async({title, content, imageURLs, category, userUID, email}: postUploadProps) => {
+export const uploadPostToFirestore = async({title, content, imageURLs, category, userUID, email}: addPostProps) => {
   const docRef = await addDoc(collection(db, "posts"), {
     title, // 제목 
     content, // 내용
@@ -67,36 +69,97 @@ export const uploadPostToFirestore = async({title, content, imageURLs, category,
 
 
 // 게시글 상세 조회
-export const getDetailPost = async (major: string, postId: string) => {
-  const docRef = doc(db, major, postId);
-  const docSnap = await getDoc(docRef); 
-  
-  console.log("docSnap.data()", docSnap.data());
-  
+export const getDetailPost = async (postId: string) => {
+  const docRef = doc(db, "posts", postId); // 조회할 위치 /posts/{postID}
+  const docSnap = await getDoc(docRef);  
+	console.log("docSnap.data()", docSnap.data());
+	
   // 파이어베이스에 문서가 존재할 때 
   if(docSnap.exists()) {
     const data = docSnap.data();
+		const uesrUID = data.userUID; // 작성한 유저의 uid
+		let photoURL = null; // 유저의 프로필 이미지 담을 변수
+
+		if(uesrUID) {
+			const userDocRef = doc(db, "users", uesrUID);
+			const userDocSnap = await getDoc(userDocRef);
+			if(userDocSnap.exists()) {
+				const userData = userDocSnap.data();
+				photoURL = userData.photoURL;
+			}
+		}
+
     return {
       id: docSnap.id, // 문서 ID
       title: data.title, // 게시글 제목
       content: data.content, // 게시글 내용
-      imageUrls: data.imageUrls, // 게시글 이미지
-      major: data.major, // 전공
-      userId: data.userId, // 게시글 작성자
+      imageURLs: data.imageURLs, // 게시글 이미지
+      category: data.category, // 전공
       createdAt: data.createdAt.toDate(), // 게시글 작성일
+			email: data.email, // 작성한 유저의 email
+			userUID: data.userUID, // 작성한 유저의 uid
+			photoURL: photoURL // 작성한 유저의 프로필 이미지
     };
   } else {
     throw new Error('게시글을 찾을 수 없습니다.');
   }
 }
 
+// 댓글 조회
+export const getComments = async ( postId: string ) => {
+	// 모든 댓글 조회 쿼리(최근 작성일 순서로 작성)
+  const q = query(
+    collection(db, "posts", postId, "comments"),
+    orderBy("createdAt", "asc")
+  );
+	// 데이터 가지고오기
+  const snapshot = await getDocs(q);
+  
+	const comments = await Promise.all(
+		snapshot.docs.map(async (commentDoc) => {
+			const data = commentDoc.data();
+			console.log("data data : ", data);
+			const createdAt = (data.createdAt as Timestamp).toDate();
+			const userUID = data.userUID;
+			let photoURL = null;
+			let userEmail = null;
+
+			if(userUID) {
+				try{
+					const userRef = doc(db, "users", userUID);
+					const userSnap = await getDoc(userRef);
+					if(userSnap.exists()) {
+						const userData = userSnap.data();
+						photoURL = userData.photoURL;
+						userEmail = userData.email;
+					}
+
+				} catch(e) {
+					console.error("댓글 조회 파트에서 유저 조회에 오류남 : ", e);
+				}
+			
+			return {
+      commentId: commentDoc.id, // 댓글 uid
+      content: data.content, // 댓글 내용
+      userUID: data.userUID, // 댓글 작성자 uid
+      createdAt: createdAt, // 댓글 작성일
+			email: userEmail, 
+			uesrPhotoURL: photoURL,
+    };
+			}
+		})
+	)
+	
+	return comments;
+};
+
 // 댓글 추가
-export const addComment = async({major, postId, comment, userId}:commentProps) => {
+export const addComment = async({postId, comment, userUID}:addCommentProps) => {
   try{
     await addDoc(
-      collection(db, major, postId, "comments"), 
+      collection(db, "posts", postId, "comments"), 
       {
-        userId: userId,
+        userUID: userUID,
         content: comment,
         createdAt: Timestamp.now(),
       }
@@ -105,3 +168,36 @@ export const addComment = async({major, postId, comment, userId}:commentProps) =
     console.error("Error add comment: ", error)
   }
 };
+
+//게시글 좋아요 기능
+export const likePost = async (postId:string, userUID:string) => {
+	const likeRef = doc(db, "posts", postId, "likes", userUID);
+	// setDoc: 문서가 있으면 덮어쓰고 없으면 새로 생성한다. 또 문서ID를 직정 정해서 사용하는 경우 사용한다.
+	await setDoc(likeRef, {
+		likedAt: Timestamp.now(),
+	})
+}
+
+//게시글 좋아요 취소 기능
+export const unlikePost = async (postId:string, userUID:string) => {
+	const likeRef = doc(db, "posts", postId, "likes", userUID);
+	// likes에서 userUID에 해당하는 문서를 삭제한다.
+	await deleteDoc(likeRef);
+}
+
+// 좋아요 눌렀는지 확인
+export const isPostLiked = async (postId:string, userUID:string): Promise<boolean> => {
+	const likeRef = doc(db, "posts", postId, "likes", userUID);
+	const likSnap = await getDoc(likeRef);
+	//존재 여부를 boolean값으로 리턴한다.
+	return likSnap.exists();
+}
+
+// 좋아요 개수 카운트
+export const getLikePostCount = async(postId:string): Promise<number> => {
+	const likesRef = collection(db, "posts", postId, "likes");
+	const likesSnap = await getDocs(likesRef);
+
+	return likesSnap.size;
+
+}

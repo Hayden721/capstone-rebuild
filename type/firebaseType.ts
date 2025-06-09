@@ -1,41 +1,42 @@
 import { Timestamp } from "firebase/firestore";
 
-
 // 게시글 조회 타입
 export interface postProps {
-  title: string;
-  content: string;
-  imageUrls: string[];
-  major: string;
-  userId: string;
-  createdAt: Date;
+  title: string; // 게시글 제목 
+  content: string; // 게시글 내용
+  imageURLs: string[]; // 게시글 이미지 
+  category: string; // 게시글의 카테고리
+  userUID: string; // 유저 uid
+  createdAt: Date; //게시글 생성일 
+  email: string; // 유저 이메일
+  photoURL: string; // 유저 프로필 사진
 }
 // 게시글 업로드 타입
-export interface postUploadProps {
-  title: string;
-  content: string;
-  imageURLs: string[];
-  category: string;
-  userUID: string;
-  email: string;
+export interface addPostProps {
+  title: string; // 제목
+  content: string; // 내용
+  imageURLs: string[]; // 게시글 이미지
+  category: string; // 카테고리
+  userUID: string; // 작성한 유저 uid
+  email: string; // 유저의 email
 }
 
-
 // 댓글 추가 타입
-export interface commentProps {
-  major: string,
-  postId: string,
-  comment: string,
-  userId: string,
+export interface addCommentProps {
+  postId: string, // 댓글 달 게시글의 uid
+  comment: string, // 댓글 내용
+  userUID: string, // 댓글 작성자 
 }
 // 댓글 조회 타입
 export interface getCommentProps {
-  commentId: string;
-  content: string;
-  userId: string;
-  createdAt: Date;
+  commentId: string; // 댓글 uid
+  content: string; // 댓글 내용
+  userId: string; // 댓글 작성자 uid
+  createdAt: Date; // 댓글 작성일
 }
 
+
+// 채팅방 조회 타입
 export interface getChatroomProps {
   id: string;
   title: string;
