@@ -14,6 +14,7 @@ import { useThemeContext } from '../hooks/useThemeContext';
 import { AuthProvider } from '../contexts/AuthContext';
 import * as NavigationBar from 'expo-navigation-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { PortalProvider } from '@tamagui/portal'
 // root 레이아웃 (최상위 레이아웃)
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -36,11 +37,13 @@ export default function RootLayout() {
   }
   if (error) throw error;
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <AuthProvider >
       <ThemeProvider>
         <RootLayoutNav loaded={loaded} />
       </ThemeProvider>
     </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -90,9 +93,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           // }
           
 
-          if(pathname !== '/posts/free/1FDWQogNH5VH6rA6zlQr') {
-            router.replace('/posts/free/1FDWQogNH5VH6rA6zlQr');
-          }
+          // if(pathname !== '/posts/free/rCkglMYQQPMHX0b2De3v') {
+          //   router.replace('/posts/free/rCkglMYQQPMHX0b2De3v');
+          // }
 
           console.log("현재 경로 : ", pathname);
         }, 100);
@@ -132,9 +135,10 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   if (loading || !loaded) return null; // 로딩이 되지 않았으면 렌더링 하지 않는다.
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    
       
       <SafeAreaProvider>
+        
         <TamaguiProvider config={tamaguiConfig} defaultTheme={themeMode}>
           
           <StatusBar
@@ -155,8 +159,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           </Stack>
           
         </TamaguiProvider>
+        
       </SafeAreaProvider>
-    </GestureHandlerRootView>
+    
   )
 }
 

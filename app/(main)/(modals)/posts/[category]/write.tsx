@@ -129,7 +129,7 @@ const confirmSubmit = () => {
             value={content}
             onChangeText={setContent}
             style={{
-              backgroundColor: theme.color6.val,
+              backgroundColor: theme.color1.val,
               height: Platform.OS === 'ios' ? 500: 580,
               fontSize: 16,
               // paddingVertical: 12,
@@ -146,7 +146,7 @@ const confirmSubmit = () => {
           keyboardShouldPersistTaps='always'
           scrollEventThrottle={16}
           nestedScrollEnabled={true}
-          style={{ backgroundColor: theme.color12.val }}
+          style={{ backgroundColor: theme.color1.val }}
         >
           {imageUris.map((uri) => (
             <TouchableWithoutFeedback key={uri}>
@@ -185,7 +185,7 @@ const confirmSubmit = () => {
         <View 
           style={{ marginTop: 'auto', flexDirection: 'row', 
             justifyContent: 'space-between', padding: 15, 
-            alignItems:'center', backgroundColor: theme.color9.val}}  
+            alignItems:'center', backgroundColor: theme.color1.val}}  
         >
           <TouchableOpacity onPress={handleImagePicker} style={{ marginLeft: 10 }}>
             <Camera size="$2" color={'$color12'} />

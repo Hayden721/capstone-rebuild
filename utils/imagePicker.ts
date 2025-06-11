@@ -74,9 +74,9 @@ export const pickImage = async ({maxImages = 5, currentUris=[]}:ImagePickerProps
 const compressImage = async(uri: string) => {
   const result = await ImageManipulator.manipulateAsync(
     uri,
-    [{resize: {width: 300}}],
+    [],
     {
-      compress:0.5,
+      compress:0.7,
       format: ImageManipulator.SaveFormat.JPEG,
     }
   )

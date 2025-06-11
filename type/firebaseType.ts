@@ -31,8 +31,10 @@ export interface addCommentProps {
 export interface getCommentProps {
   commentId: string; // 댓글 uid
   content: string; // 댓글 내용
-  userId: string; // 댓글 작성자 uid
+  userUID: string; // 댓글 작성자 uid
   createdAt: Date; // 댓글 작성일
+  email: string; // 유저 이메일
+  userPhotoURL: string; // 유저 프로필 이미지
 }
 
 

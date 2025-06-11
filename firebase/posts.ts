@@ -105,6 +105,17 @@ export const getDetailPost = async (postId: string) => {
   }
 }
 
+// 게시글 삭제
+export const deletePost = async (postId: string) => {
+	try{
+		const postRef = doc(db, "posts", postId);
+		await deleteDoc(postRef);
+	} catch(e) {
+		console.log("게시글 삭제 실패 : ", e);
+	}
+	
+}
+
 // 댓글 조회
 export const getComments = async ( postId: string ) => {
 	// 모든 댓글 조회 쿼리(최근 작성일 순서로 작성)
@@ -121,35 +132,33 @@ export const getComments = async ( postId: string ) => {
 			console.log("data data : ", data);
 			const createdAt = (data.createdAt as Timestamp).toDate();
 			const userUID = data.userUID;
-			let photoURL = null;
-			let userEmail = null;
+			let photoURL = null; // 유저 프로필 이미지
+			let userEmail = null; // 유저 이메일
 
-			if(userUID) {
-				try{
+			try{
+				if(userUID) {
 					const userRef = doc(db, "users", userUID);
 					const userSnap = await getDoc(userRef);
 					if(userSnap.exists()) {
 						const userData = userSnap.data();
-						photoURL = userData.photoURL;
-						userEmail = userData.email;
+						photoURL = userData.photoURL ?? null;
+						userEmail = userData.email ?? null;
 					}
-
-				} catch(e) {
-					console.error("댓글 조회 파트에서 유저 조회에 오류남 : ", e);
 				}
-			
-			return {
-      commentId: commentDoc.id, // 댓글 uid
-      content: data.content, // 댓글 내용
-      userUID: data.userUID, // 댓글 작성자 uid
-      createdAt: createdAt, // 댓글 작성일
-			email: userEmail, 
-			uesrPhotoURL: photoURL,
-    };
+			} catch(e) {
+				console.error("댓글 조회 파트에서 유저 조회에 오류남 : ", e);
 			}
+		
+			return {
+				commentId: commentDoc.id, // 댓글 uid
+				content: data.content, // 댓글 내용
+				userUID: data.userUID, // 댓글 작성자 uid
+				createdAt: createdAt, // 댓글 작성일
+				email: userEmail, 
+				userPhotoURL: photoURL,
+			};
 		})
-	)
-	
+	)	
 	return comments;
 };
 
@@ -168,6 +177,15 @@ export const addComment = async({postId, comment, userUID}:addCommentProps) => {
     console.error("Error add comment: ", error)
   }
 };
+
+export const deleteComment = async(postId: string, commentId: string) => {
+	try {
+		const commentRef = doc(db, "posts", postId, "comments", commentId);
+		deleteDoc(commentRef);
+	} catch(e) {
+		console.error("댓글 삭제 실패 : ", e);
+	}
+}
 
 //게시글 좋아요 기능
 export const likePost = async (postId:string, userUID:string) => {

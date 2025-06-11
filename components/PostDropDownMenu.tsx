@@ -2,27 +2,35 @@ import { useState } from "react";
 import { View, Modal, TouchableOpacity, Text, StyleSheet, Dimensions, Pressable, Platform } from 'react-native';
 import { Button, useTheme, Popover, YStack} from "tamagui";
 import { EllipsisVertical, Siren, Trash2 } from '@tamagui/lucide-icons';
+import { deletePost } from "@/firebase/posts";
+import { useRouter } from "expo-router";
 
 
 type DropDownMenuProps = {
-  category: string;
   postId: string;
   postUserUID: string|undefined;
   userUID: string|null|undefined;
+  category: string;
 }
 // 게시글 상세 스크린 헤더 버튼 (글 삭제, 글 신고)
-export const PostDropDownMenu = ({category, postId, postUserUID, userUID}: DropDownMenuProps) => {
+export const PostDropDownMenu = ({postId, postUserUID, userUID, category}: DropDownMenuProps) => {
   const [menuVisible, setMenuVisible] = useState(false); // 메뉴의 가시성을 관리
   const theme = useTheme();
+  const router = useRouter();
   // 메뉴 열기/닫기 토글 함수
   const toggleMenu = () => {
     setMenuVisible(prev => !prev)
     console.log("토글 클릭");
   };
   // 게시글 삭제 함수
-  const handleDeletePost = () => {
+  const handleDeletePost = async () => {
+    const getPostId = postId;
+    console.log("getPostId", getPostId);
+    deletePost(postId);
+    
     setMenuVisible(false);
-    console.log("major menu", category);
+    
+    router.replace(`/(main)/(modals)/posts/${category}`);
 
   }
   // 게시글 신고 함수
