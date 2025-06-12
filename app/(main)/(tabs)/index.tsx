@@ -9,12 +9,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
+
 // 홈 화면
 export default function home() {
 const theme = useTheme();
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: theme.color1.val}}>
+    <SafeAreaView style={{flex:1, backgroundColor: theme.color1.val}}>
       <YStack>
         <XStack>
           <Text>최근 게시글</Text>

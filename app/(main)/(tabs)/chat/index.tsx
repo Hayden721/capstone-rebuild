@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { 
   YStack, XStack, Text, Card, Button, 
   Separator, Label, RadioGroup, Paragraph, 
-  Theme, AnimatePresence, Image, styled, View, 
+  Theme, AnimatePresence, styled, View, 
   useTheme, H6} from 'tamagui';
 import { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,10 +11,11 @@ import { getChatroomList } from '@/firebase/firestore';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { checkChatroomSubscribeUser } from '@/firebase/chat';
+import { Image } from 'expo-image';
 
 export default function ChatList() {
 const theme = useTheme();
-const [chatroom, setChatroom] = useState([]); // 채팅방 리스트 데이터
+const [chatroom, setChatroom] = useState<{id: string, title: string, explain: string, imageURL: string}[]>([]); // 채팅방 리스트 데이터
 const router = useRouter();
 const {user} = useAuth();
 useFocusEffect(
@@ -55,10 +56,13 @@ const handleChatroomAccess = async (item: any) => {
         renderItem={({item}) => (
           <TouchableOpacity onPress={() => handleChatroomAccess(item)}>
             <Card p="$4" m="$2" borderRadius="$4" backgroundColor="$background">
-              <YStack>
-                <H6>{item.title}</H6>
-                <Paragraph>{item.explain}</Paragraph>
-              </YStack>
+              <XStack style={{justifyContent:'space-between'}}>
+                <YStack>
+                  <H6>{item.title}</H6>
+                  <Paragraph>{item.explain}</Paragraph>
+                </YStack>
+                <Image source={{uri: item.imageURL}} style={{width:60, height:60, borderRadius:10}}/>
+              </XStack>
             </Card>
           </TouchableOpacity>
       )}

@@ -52,7 +52,6 @@ export const PostDropDownMenu = ({postId, postUserUID, userUID, category}: DropD
         transparent
         animationType="fade"
         onRequestClose={() => setMenuVisible(false)}
-        
       >
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           {/* 회색 배경 눌렀을 때 닫히게 */}

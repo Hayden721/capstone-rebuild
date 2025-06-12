@@ -2,7 +2,7 @@ import { View, Text, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, P
 import { router } from 'expo-router';
 import { CustomHeader } from '@/components/CustomHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Avatar, Form, Input, Label, TextArea, useTheme, XStack, YStack, Button } from 'tamagui';
+import { Avatar, Form, Input, Label, TextArea, useTheme, XStack, YStack, Button, Spinner } from 'tamagui';
 import { useState } from 'react';
 import pickImage from '@/utils/imagePicker';
 import { Camera } from '@tamagui/lucide-icons';
@@ -19,6 +19,8 @@ export default function ChatCreateScreen() {
   const {user} = useAuth();
   const userUID = user?.uid as string;
   const userEmail = user?.email as string;
+  const [createLoading, setCreateLoading] = useState<boolean>(false);
+
   const handleImagePicker = async () => {
     const pick = await pickImage({maxImages:1});
     
@@ -30,7 +32,7 @@ export default function ChatCreateScreen() {
 
   // 채팅방 생성
   const handleCreateChatroom = async() => {
-    
+    setCreateLoading(true)
     console.log("채팅방 이름 : ", title);
     console.log("채팅방 설명 : ", explain);
     console.log("채팅방 이미지 : ", imageUri);
@@ -47,6 +49,8 @@ export default function ChatCreateScreen() {
       router.replace(`/(main)/(modals)/chat/${chatroomId}/chatroom`);
     }catch(error) {
       console.log(error);
+    }finally{
+      setCreateLoading(false);
     }
   }
 
@@ -91,7 +95,7 @@ export default function ChatCreateScreen() {
                   <Label htmlFor="explain" width={90}>
                     채팅방 설명
                   </Label>
-                  <TextArea id="explain" height={200} value={explain} onChangeText={setExplain}/>
+                  <TextArea id="explain" style={{height:200, textAlignVertical:'top'}} value={explain} onChangeText={setExplain}/>
                 </YStack>
 
                 <YStack style={{marginTop:18}}>
@@ -101,8 +105,15 @@ export default function ChatCreateScreen() {
             </YStack>
           </YStack>
 
-          
+          {createLoading && (
+          <View style={styles.loadingOverlay}>
+            <Spinner size='large' color="$accent1"/>
+          </View>
+        )}
+
         </YStack>
+        
+        
 
       </TouchableWithoutFeedback>
     </SafeAreaView>
@@ -124,4 +135,11 @@ const styles = StyleSheet.create({
     bottom: -10,
     right: -10,
   },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject, // 전체 화면 덮기
+    // backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  }
 });

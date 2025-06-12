@@ -50,10 +50,13 @@ export const getChatroomList = async () => {
     const chatroomRef = collection(db, 'chatrooms');
     const chatroomQuery = query(chatroomRef, orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(chatroomQuery);
-
+    
+    console.log("채팅방 리스트 querySanpshot : ", querySnapshot);
     const chatrooms = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
+      //필드
+      // amdin, createdAt, explain, users, imageURL
     }))
     return chatrooms;
   } catch(error) {

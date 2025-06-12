@@ -17,7 +17,6 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.capstonerebuild"
     },
-    
     "android": {
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
@@ -59,6 +58,7 @@
       "eas": {
         "projectId": "4d588621-5d8f-455d-8ffa-210537714c0f"
       }
-    }
+    },
+    "owner": "hayden1234"
   }
 }
