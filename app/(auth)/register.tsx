@@ -10,7 +10,7 @@ import {
 } from 'tamagui';
 import { Check } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import { eachDayOfInterval } from 'date-fns';
+
 
 export default function register() {
 const theme = useTheme();

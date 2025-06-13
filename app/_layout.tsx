@@ -80,9 +80,9 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
       if (__DEV__ && isLayoutMounted) {
         // 안전한 시점에서 리디렉션
         const redirectTimer = setTimeout(() => {
-          if (pathname !== '/chat') {
-            router.replace('/chat');
-          }
+          // if (pathname !== '/my/changePassword') {
+          //   router.replace('/my/changePassword');
+          // }
 
           // if(pathname !== '/chat/9K80RQakI7AKYw4Jdy88/chatroom') {
           //   router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');

@@ -5,13 +5,14 @@ import {
   Theme, AnimatePresence, styled, View, 
   useTheme, H6} from 'tamagui';
 import { useCallback, useEffect, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
 import ChatroomAddButton from '@/components/ChatroomAddButton';
 import { getChatroomList } from '@/firebase/firestore';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { checkChatroomSubscribeUser } from '@/firebase/chat';
 import { Image } from 'expo-image';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChatList() {
 const theme = useTheme();
@@ -39,29 +40,28 @@ const handleChatroomAccess = async (item: any) => {
     router.push(`/(main)/(modals)/chat/${item.id}/preview`)
   }
 
-  //if(true) {채팅방으로 이동} else preview로 이동
 }
 
 
   return (
-    <SafeAreaView style={{ flex: 1, padding: 10, backgroundColor: theme.color1.val}}>
-      <YStack>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.color1.val}} edges={['top']}>
+      <View>
         <Text style={{padding:5}} fontSize={'$6'} fontWeight={'900'}>채팅</Text>
-      </YStack>
+      </View>
 
       <FlatList
         data={chatroom}
-        style={{flex: 1}}
+        style={{flex: 1, backgroundColor:theme.color1.val}}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => (
           <TouchableOpacity onPress={() => handleChatroomAccess(item)}>
-            <Card p="$4" m="$2" borderRadius="$4" backgroundColor="$background">
+            <Card p="$4" m="$2" borderRadius="$4" style={{backgroundColor: theme.color3.val}}>
               <XStack style={{justifyContent:'space-between'}}>
                 <YStack>
                   <H6>{item.title}</H6>
                   <Paragraph>{item.explain}</Paragraph>
                 </YStack>
-                <Image source={{uri: item.imageURL}} style={{width:60, height:60, borderRadius:10}}/>
+                <Image source={{uri: item.imageURL}} style={{width:65, height:65, borderRadius:10}}/>
               </XStack>
             </Card>
           </TouchableOpacity>

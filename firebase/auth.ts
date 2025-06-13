@@ -1,13 +1,17 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
   sendEmailVerification,
   getAuth, deleteUser,
-  updateProfile
+  updateProfile,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { Alert } from 'react-native';
 import { uploadProfileImageAsync } from '@/firebase/storage';
-import { signupProps } from '@/type/authType';
+import { signupProps, changePasswordProps } from '@/type/authType';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
+import { UserMinus } from '@tamagui/lucide-icons';
 
 // 회원가입
 export const firebaseSignUp = async (email: string, password: string): Promise<signupProps> => {
@@ -61,8 +65,6 @@ export const saveUserToFirestore = async (userData: signupProps) => {
   
 }
 
-
-
 // 파이어베이스 로그인
 export const firebaseLogin = async (email: string, password: string) => {  
   try {
@@ -91,6 +93,38 @@ export const firebaseLogin = async (email: string, password: string) => {
 // 파이어베이스 로그아웃
 export const firebaseLogout = async () => {
   await signOut(auth);
+}
+
+// 비밀번호 수정
+export const firebaseChangePassword = async({currentPw, newPw, checkPw}:changePasswordProps)  => {
+  const user = auth.currentUser;
+  if(!user) {
+    return {success: false, message: "로그인 상태가 아닙니다."};
+  }
+  if(!user.email) {
+    return null;
+  }
+  if(newPw !== checkPw) {
+    return null;
+  }
+  
+  try {
+    const credential = EmailAuthProvider.credential(user.email, currentPw); // 사용자 이메일과 비밀번호로 credential생성
+    reauthenticateWithCredential(user, credential); // 현재 로그인 인증 재확인
+    // 패스워드 변경
+    updatePassword(user, newPw);
+
+    return {success: true, message: "비밀번호가 성공적으로 변경되었습니다."};
+  }catch(e:any) {
+    console.error("비밀번호 수정 실패 : ", e);
+    let message = "오류가 발생했습니다.";
+    if(e.code === "auth/wrong-password") {
+      message = "비밀번호가 일치하지 않습니다.";
+    } else if(e.error === 'auth/weak-password') {
+      message = "비밀번호는 최소 ?자 이상이어야 합니다.";
+    }
+    return {success: false, message};
+  }
 }
 
 // 파이어베이스 회원 탈퇴

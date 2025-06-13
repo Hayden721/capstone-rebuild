@@ -142,7 +142,7 @@ const handleUpdateProfileImage = async () => {
 					
 					<YStack>
 						<H6>계정</H6>
-						<TouchableOpacity onPress={()=> router.navigate('/(main)/(tabs)/my/changePassword')} 
+						<TouchableOpacity onPress={()=> router.navigate('/(main)/(modals)/my/changePassword')} 
 							style={{paddingTop:8, paddingBottom:8}}>
 								<Text style={{fontSize:15}}>
 									비밀번호 변경

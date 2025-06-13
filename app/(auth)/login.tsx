@@ -21,9 +21,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const user = await firebaseLogin(fullEmail, password);
-      console.log("로그인 성공", user.email);
       
-
     } catch (error) {
       console.log("로그인 실패", error);
     }
@@ -76,7 +74,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   loginInput: {
     height: 50,
-    fontSize: 14, // 작게 설정
+    fontSize: 14, // 폰트 사이즈
     
     paddingVertical: 0,
     textAlignVertical: 'center',
