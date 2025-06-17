@@ -110,9 +110,9 @@ export const firebaseChangePassword = async({currentPw, newPw, checkPw}:changePa
   
   try {
     const credential = EmailAuthProvider.credential(user.email, currentPw); // 사용자 이메일과 비밀번호로 credential생성
-    reauthenticateWithCredential(user, credential); // 현재 로그인 인증 재확인
+    await reauthenticateWithCredential(user, credential); // 현재 로그인 인증 재확인
     // 패스워드 변경
-    updatePassword(user, newPw);
+    await updatePassword(user, newPw);
 
     return {success: true, message: "비밀번호가 성공적으로 변경되었습니다."};
   }catch(e:any) {

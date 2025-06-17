@@ -55,8 +55,10 @@ export default function ChangePassword() {
 					placeholder='password' 
 					style={styles.passwordInput} />
 					<PasswordCheck password={newPassword} chkPassword={checkPassword}/>
-
-				<Button onPress={() => handleChangePassword(currentPassword, newPassword, checkPassword)} style={{marginTop: 20, backgroundColor: theme.accent1.val}}>
+				{/* currentPassword, newPassword, checkPassword */}
+				<Button onPress={() => handleChangePassword(currentPassword, newPassword, checkPassword)} 
+					style={{marginTop: 20, backgroundColor: theme.accent1.val}}
+					disabled={!(currentPassword && newPassword && checkPassword)}>
 					<Text style={{color: 'white'}}>비밀번호 변경</Text>
 				</Button>		
 			</YStack>

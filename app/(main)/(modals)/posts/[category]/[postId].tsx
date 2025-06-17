@@ -140,7 +140,7 @@ return (
     <KeyboardAvoidingView
     style={{ flex: 1, backgroundColor: theme.color1.val }}
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    keyboardVerticalOffset={Platform.OS === 'ios'? -30 : 0}
+    keyboardVerticalOffset={Platform.OS === 'ios'? -30 : 20}
     >
       <SafeAreaView style={{ flex: 1 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -37,12 +37,13 @@ export interface getCommentProps {
   userPhotoURL: string; // 유저 프로필 이미지
 }
 
-
 // 채팅방 조회 타입
 export interface getChatroomProps {
-  id: string;
+  admin: string;
+  createdAt: Timestamp|Date;
   title: string;
   explain: string;
   imageURL: string|null;
-  createdAt: Timestamp|Date;
+  users: string[];
 }
+

@@ -19,9 +19,7 @@ export default function MyPageLayout () {
 				options={{
 					title: '',
 				}}/>
-			<Stack.Screen
-				name='changePassword'/>
-
+				
 		</Stack>
 	)
 }

@@ -1,12 +1,14 @@
-import React from 'react';
-import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import { useTheme } from 'tamagui';
+import { customAlertProps } from '../type/Types';
 
+const CustomAlert = ({visible, title, message, onConfirm, onCancel, confirmText, cancelText, confirmColor, cancelColor}: customAlertProps) => {
 
-const CustomAlert = ({visible, title, message, onConfirm, onCancel, confirmText, cancelText, confirmColor, cancelColor}) => {
 	const theme = useTheme();
+  
 	return (
-		<Modal transparent visible={visible} animationType='fade' onRequestClose={onCancel}>
+		<Modal transparent visible={visible} animationType='fade' onRequestClose={onCancel} statusBarTranslucent>
 			<View style={styles.overlay}>
 				<View style={[styles.alertBox, {backgroundColor: theme.color4.val}]}>
 					{title ? <Text style={[styles.title, {color:theme.color12.val}]}>{title}</Text> : null}
@@ -21,7 +23,6 @@ const CustomAlert = ({visible, title, message, onConfirm, onCancel, confirmText,
 						<TouchableOpacity style={styles.button} onPress={onCancel}>
 							<Text style={[styles.cancelText, {color:cancelColor}]}>{cancelText}</Text>
 						</TouchableOpacity>
-						
 
 					</View>
 				</View>
@@ -36,10 +37,10 @@ export default CustomAlert;
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   overlay: {
-    flex: 1,
-    backgroundColor: '#00000033',
-    justifyContent: 'center',
-    alignItems: 'center',
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.1)', // ✅ 배경 명시: 반투명한 검정
+  justifyContent: 'center',
+  alignItems: 'center',
   },
   alertBox: {
     width: width * 0.75,

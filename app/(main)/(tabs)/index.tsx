@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
+
 // 홈 화면
 export default function home() {
 const theme = useTheme();

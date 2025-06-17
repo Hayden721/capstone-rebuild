@@ -6,8 +6,7 @@ import {
 import { auth, db } from '../firebase';
 
 import { uploadChatroomImage } from './storage';
-
-
+import { getChatroomProps } from '@/type/firebaseType';
 
 // 채팅방 생성
 export const createChatroom = async ({
@@ -54,9 +53,10 @@ export const getChatroomList = async () => {
     console.log("채팅방 리스트 querySanpshot : ", querySnapshot);
     const chatrooms = querySnapshot.docs.map(doc => ({
       id: doc.id,
+      //data: amdin, createdAt, explain, users, imageURL
       ...doc.data(),
-      //필드
-      // amdin, createdAt, explain, users, imageURL
+      
+
     }))
     return chatrooms;
   } catch(error) {
@@ -66,4 +66,20 @@ export const getChatroomList = async () => {
   
 }
 
+// 채팅방 정보 조회 
+export const getChatroomInfo = async (chatroomId: string): Promise<getChatroomProps | null> => {
+  try{
+    const roomInfoRef = doc(db, 'chatrooms', chatroomId);
+    const roomInfoSnap = await getDoc(roomInfoRef);
+    if(roomInfoSnap.exists()) {
+      return roomInfoSnap.data() as getChatroomProps;
 
+    } else {
+      console.warn("chatrooms에 데이터 없음 : ", chatroomId);
+      return null;
+    }
+  } catch(e) {
+    console.error("Failed to fetch chatroom info : ", e);
+    return null;
+  }
+}

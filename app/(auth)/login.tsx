@@ -65,7 +65,7 @@ export default function Login() {
           </TouchableOpacity>
         </XStack>
       </Form>
-      <ThemeToggleButton/>
+      
       </YStack>
     </View>
   );

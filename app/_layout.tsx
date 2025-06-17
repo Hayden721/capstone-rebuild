@@ -37,13 +37,17 @@ export default function RootLayout() {
   }
   if (error) throw error;
   return (
+    
     <GestureHandlerRootView style={{ flex: 1 }}>
-    <AuthProvider >
-      <ThemeProvider>
-        <RootLayoutNav loaded={loaded} />
-      </ThemeProvider>
-    </AuthProvider>
+      <SafeAreaProvider>
+        <AuthProvider >
+          <ThemeProvider>
+            <RootLayoutNav loaded={loaded} />
+          </ThemeProvider>
+        </AuthProvider>
+    </SafeAreaProvider>
     </GestureHandlerRootView>
+
   );
 }
 
@@ -93,8 +97,8 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           // }
           
 
-          // if(pathname !== '/posts/free/rCkglMYQQPMHX0b2De3v') {
-          //   router.replace('/posts/free/rCkglMYQQPMHX0b2De3v');
+          // if(pathname !== '/chat/fOxIMEV1BzYPpyCxGJWz/preview') {
+          //   router.replace('/chat/fOxIMEV1BzYPpyCxGJWz/preview');
           // }
 
           console.log("현재 경로 : ", pathname);
@@ -137,13 +141,13 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   return (
     
       
-      <SafeAreaProvider>
+      
 
         <TamaguiProvider config={tamaguiConfig} defaultTheme={themeMode}>
           
           <StatusBar
             barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}
-            translucent={false}
+            translucent={true}
             backgroundColor={themeMode === 'light' ? 'hsla(0, 7%, 97%, 1)' : 'hsla(0, 7%, 1%, 1)' }
           />
           
@@ -160,7 +164,7 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
           
         </TamaguiProvider>
         
-      </SafeAreaProvider>
+      
   )
 }
 

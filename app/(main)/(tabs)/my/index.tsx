@@ -12,16 +12,17 @@ import { Modal } from "react-native";
 import { auth } from '@/firebase';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CustomAlert from "@/components/CutsomAlert";
 
 export default function My() {
 	const theme = useTheme();
 	const router = useRouter();
 	// const [imageUris, setImageUris] = useState<string[]>([]);
 	const {user, setUser} = useAuth();
-	const uid = user?.uid; // 유저 uid
 	const [profileImage, setProfileImage] = useState<string|null>(null); // 프로필 이미지 url 조회
 	const [userImgLoading, setUserImgLoading] = useState(false); // 이미지 업로드 로딩 상태
-	
+	const [logoutVisible, setLogoutVisible] = useState(false);
+	const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
 
 useEffect(() => {
   const user = auth.currentUser;
@@ -65,50 +66,16 @@ const handleUpdateProfileImage = async () => {
     setUserImgLoading(false);
   }
 };
-
 	//로그아웃
-	const handleLogout = async () => {
-		Alert.alert(
-			'로그아웃',
-			'로그아웃 하시겠습니까?',
-			[
-				{
-					text: '아니요',
-					style: 'cancel'
-				},
-				{
-					text: '예',
-					onPress: async () => {
-						await firebaseLogout();
-					},
-				},
-			],
-			{ cancelable: true}
-		)
+	const handlelogout = async () => {
+		await firebaseLogout();
 	}
-	// 비밀번호 변경 
-	const handleChangePassword = () => {
-		
-	}
+	
 
+	
 	// 회원 탈퇴
-	const handleDeleteAccount = () => {
-		Alert.alert(
-			'회원탈퇴',
-			'회원탈퇴 하시겠습니까?',
-			[
-				{
-					text: '아니요',
-					style: 'cancel'
-				},
-				{
-					text: '예',
-					onPress: async () => {
-						await firebaseDeleteAccount();
-					}
-				}
-			]
-		)
+	const handleDeleteAccount = async() => {
+		await firebaseDeleteAccount();
 	}
 
 	return (
@@ -162,11 +129,37 @@ const handleUpdateProfileImage = async () => {
 
 					<YStack>
 						<H6>기타</H6>
-						<TouchableOpacity onPress={handleLogout} style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>로그아웃</Text></TouchableOpacity>
-						<TouchableOpacity onPress={handleDeleteAccount} style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>회원탈퇴</Text></TouchableOpacity>
+						<TouchableOpacity onPress={()=>setLogoutVisible(true)} style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>로그아웃</Text></TouchableOpacity>
+						<TouchableOpacity onPress={() => setDeleteAccountVisible(true) } style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>회원탈퇴</Text></TouchableOpacity>
 					</YStack>
 					<Divider/>
 				</ScrollView>
+
+				<CustomAlert visible={logoutVisible} 
+					title="로그아웃" 
+					message="로그아웃 하시겠어요?" 
+					confirmText="확인" 
+					confirmColor={theme.color12.val}
+					cancelText="취소"
+					cancelColor={"red"}
+					onConfirm={() => handlelogout}
+					onCancel={() => {
+						setLogoutVisible(false);
+				}}/>
+
+				<CustomAlert visible={deleteAccountVisible} 
+					title="회원 탈퇴" 
+					message="회원 탈퇴 하시겠어요?" 
+					confirmText="확인" 
+					confirmColor={theme.color12.val}
+					cancelText="취소"
+					cancelColor={"red"}
+					onConfirm={() => handleDeleteAccount}
+					onCancel={() => {
+						setDeleteAccountVisible(false)
+						
+				}}/>
+
 			</SafeAreaView>
 		</>
 	);
