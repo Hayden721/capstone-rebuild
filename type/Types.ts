@@ -7,6 +7,6 @@ export interface customAlertProps {
 	onCancel: ()=>void; // 취소 함수 
 	confirmText: string; // 
 	cancelText: string; 
-	confirmColor: string; 
+	confirmColor: string;
 	cancelColor: string;
 }

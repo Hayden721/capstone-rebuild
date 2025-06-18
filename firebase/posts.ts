@@ -5,9 +5,12 @@ import {
 	where,
 	setDoc,
 	deleteDoc,
+	increment,
+	QuerySnapshot,
   } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { addCommentProps, addPostProps } from '@/type/firebaseType';
+import { addCommentProps, addPostProps, getPostProps } from '@/type/postType';
+
 
 let lastVisible: QueryDocumentSnapshot<DocumentData> | null = null;
 
@@ -69,7 +72,7 @@ export const uploadPostToFirestore = async({title, content, imageURLs, category,
 
 
 // 게시글 상세 조회
-export const getDetailPost = async (postId: string) => {
+export const getDetailPost = async (postId: string):Promise<getPostProps> => {
   const docRef = doc(db, "posts", postId); // 조회할 위치 /posts/{postID}
   const docSnap = await getDoc(docRef);  
 	console.log("docSnap.data()", docSnap.data());
@@ -88,9 +91,8 @@ export const getDetailPost = async (postId: string) => {
 				photoURL = userData.photoURL;
 			}
 		}
-
     return {
-      id: docSnap.id, // 문서 ID
+      postId: docSnap.id, // 문서 ID
       title: data.title, // 게시글 제목
       content: data.content, // 게시글 내용
       imageURLs: data.imageURLs, // 게시글 이미지
@@ -99,7 +101,7 @@ export const getDetailPost = async (postId: string) => {
 			email: data.email, // 작성한 유저의 email
 			userUID: data.userUID, // 작성한 유저의 uid
 			photoURL: photoURL // 작성한 유저의 프로필 이미지
-    };
+    }as getPostProps;
   } else {
     throw new Error('게시글을 찾을 수 없습니다.');
   }
@@ -190,17 +192,27 @@ export const deleteComment = async(postId: string, commentId: string) => {
 //게시글 좋아요 기능
 export const likePost = async (postId:string, userUID:string) => {
 	const likeRef = doc(db, "posts", postId, "likes", userUID);
+	const postRef = doc(db, "posts", postId);
 	// setDoc: 문서가 있으면 덮어쓰고 없으면 새로 생성한다. 또 문서ID를 직정 정해서 사용하는 경우 사용한다.
 	await setDoc(likeRef, {
 		likedAt: Timestamp.now(),
+	})
+	await updateDoc(postRef, {
+		likeCount: increment(1),
 	})
 }
 
 //게시글 좋아요 취소 기능
 export const unlikePost = async (postId:string, userUID:string) => {
 	const likeRef = doc(db, "posts", postId, "likes", userUID);
+	const postRef = doc(db, "posts", postId);
 	// likes에서 userUID에 해당하는 문서를 삭제한다.
 	await deleteDoc(likeRef);
+		
+	await updateDoc(postRef, {
+		likeCount: increment(-1),
+	})
+
 }
 
 // 좋아요 눌렀는지 확인
@@ -218,4 +230,23 @@ export const getLikePostCount = async(postId:string): Promise<number> => {
 
 	return likesSnap.size;
 
+}
+// 인기글 조회 (3개 제한)
+export const getPopularPosts = async(): Promise<getPostProps[]> => {
+	const popularRef = collection(db, "posts");
+	const q = query(
+		popularRef, 
+		orderBy("likeCount", "desc"),
+		limit(3)
+	);
+	const popularSnap = await getDocs(q);
+
+	return popularSnap.docs.map((doc)=> {
+		const data = doc.data();
+		return {
+			postId: doc.id,
+			...data,
+			createdAt: data.createdAt.toDate(),
+		}as getPostProps
+	})
 }

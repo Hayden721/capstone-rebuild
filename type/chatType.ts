@@ -17,3 +17,14 @@ export interface chatUserCheckProps {
 	userUid: string;
 }
 
+export interface getChatroomProps {
+	chatroomId: string;
+	admin: string;
+	title: string;
+	explain: string;
+	users: string[];
+	imageURL: string;
+	createdAt: Date;
+
+}
+

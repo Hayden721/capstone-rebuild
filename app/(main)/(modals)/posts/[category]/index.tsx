@@ -10,24 +10,16 @@ import PostAddButton from '@/components/PostAddButton';
 import { fetchPosts, resetPagination } from '@/firebase/posts';
 import { CustomHeader } from '@/components/CustomHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getPostProps } from '@/type/postType';
 import majorTitleMap from '@/constants/majorTitleMap';
 
-type postProps = {
-  id: string; // 게시글 id
-  title: string; // 제목
-  content: string; // 내용
-  imageURLs: string; // 이미지 URL
-  category: string; // 카테고리
-  userUID: string; // 유저 uid
-  email: string | null; // 이메일
-}
 
 // 게시판 리스트
 export default function PostsDetail() {
 const theme = useTheme();
 const router = useRouter();
 const { category } = useLocalSearchParams<{category: string}>(); // "com", "elec"등 카테고리
-const [postList, setPostList] = useState<postProps[]>([]); // 게시물 데이터
+const [postList, setPostList] = useState<getPostProps[]>([]); // 게시물 데이터
 const [refreshing, setRefreshing] = useState(false); // 게시글 새로고침
 const [refreshLoad, setRefreshLoad] = useState(false); // 새로고침 상태
 const [loadingMore, setLoadingMore] = useState(false); // 무한 스크롤 추가 데이터 로딩 상태
@@ -92,9 +84,9 @@ useFocusEffect(
             <View borderBottomWidth={0.5} borderColor={"#999"} > 
               <TouchableOpacity onPress={() => router.push(`./${category}/${item.id}`)}>
                 <View style={{padding:10, borderColor:'beige', flexDirection:'row', justifyContent:'space-between'}}>
-                  <View>
+                  <View style={{height:50}}>
                     <Text fontSize={19}>{item.title}</Text>
-                    <Text fontSize={16}>{item.content}</Text>
+                    <Text fontSize={16}>{item.content.length > 20 ? item.content.slice(0,20) + '...': item.content}</Text>
                   </View>              
                   <Image source={{ uri: item.imageURLs }} style={{width : 100, height : 100, borderRadius:10}}/>
                 </View>

@@ -1,7 +1,7 @@
-import { Timestamp } from "firebase/firestore";
 
 // 게시글 조회 타입
-export interface postProps {
+export interface getPostProps {
+  postId: string;
   title: string; // 게시글 제목 
   content: string; // 게시글 내용
   imageURLs: string[]; // 게시글 이미지 
@@ -10,7 +10,10 @@ export interface postProps {
   createdAt: Date; //게시글 생성일 
   email: string; // 유저 이메일
   photoURL: string; // 유저 프로필 사진
+  likeCount: string; // 좋아요 수
 }
+
+
 // 게시글 업로드 타입
 export interface addPostProps {
   title: string; // 제목
@@ -37,13 +40,5 @@ export interface getCommentProps {
   userPhotoURL: string; // 유저 프로필 이미지
 }
 
-// 채팅방 조회 타입
-export interface getChatroomProps {
-  admin: string;
-  createdAt: Timestamp|Date;
-  title: string;
-  explain: string;
-  imageURL: string|null;
-  users: string[];
-}
+
 

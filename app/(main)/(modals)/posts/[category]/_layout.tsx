@@ -1,12 +1,7 @@
-import { router, Stack, useLocalSearchParams } from "expo-router";
-import { TouchableOpacity, Pressable, Button, TouchableWithoutFeedback, View } from "react-native";
-import { Text, useTheme, Popover, YStack} from "tamagui";
-import { ArrowLeft, ChevronLeft, AlignJustify, EllipsisVertical
-} from '@tamagui/lucide-icons';
+import { Stack } from "expo-router";
 
-import majorTitleMap from '@/constants/majorTitleMap';
-import { useState } from "react";
-import PostDropDownMenu from "@/components/PostDropDownMenu";
+import { useTheme } from "tamagui";
+
 
 // (main) layout / 바텀탭 레이아웃
 export default function ListLayout() {

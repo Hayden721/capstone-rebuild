@@ -1,12 +1,10 @@
 import {
-  collection, addDoc, Timestamp, query, orderBy, getDocs, 
-  startAfter,limit, QueryDocumentSnapshot, DocumentData, doc, getDoc,
-  onSnapshot, updateDoc,
+  collection, addDoc, Timestamp, query, orderBy, getDocs, doc, getDoc, updateDoc,
   } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 import { uploadChatroomImage } from './storage';
-import { getChatroomProps } from '@/type/firebaseType';
+import { getChatroomProps } from '@/type/chatType';
 
 // 채팅방 생성
 export const createChatroom = async ({

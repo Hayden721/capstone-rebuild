@@ -1,27 +1,137 @@
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { 
   YStack, XStack, Text, Card, Button, 
-  Separator, Label, RadioGroup, Paragraph, 
-  Theme, AnimatePresence, Image, styled, 
+  Separator, Label, RadioGroup, Paragraph, styled, 
   useTheme} from 'tamagui';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useThemeContext } from '@/hooks/useThemeContext';
+import { useEffect, useState } from 'react';
+import { getPopularPosts } from '@/firebase/posts';
+import {  getPostProps } from '@/type/postType';
+import {  getChatroomProps } from '@/type/chatType';
 
-
-
-
-
+import { Image } from 'expo-image';
+import { format } from 'date-fns';
+import { MessageCircle, ThumbsUp } from '@tamagui/lucide-icons';
+import majorTitleMap from '@/constants/majorTitleMap';
+import { getNewChatrooms } from '@/firebase/chat';
 // 홈 화면
 export default function home() {
-const theme = useTheme();
+  const theme = useTheme();
+  const { themeMode } = useThemeContext(); // 테마 상태 
+  const [popularPosts, setPopularPosts] = useState<getPostProps[]>([]); // 인기글
+  const [newChatroom, setNewChatroom] = useState<getChatroomProps[]>([]); // 새로운 채팅방
+  
+  useEffect(()=> {
+    const popularPosts = async() => {
+      const posts = await getPopularPosts();
+      setPopularPosts(posts);
+      console.log("인기글 : ",posts)
+    }
+    popularPosts();
+  },[])
 
+  // useEffect(() => {
+  //   const newChatrooms = async () => {
+  //     const chatrooms = getNewChatrooms();
+  //     setNewChatroom(chatrooms);
+  //   }
+  // })
+  
   return (
     <SafeAreaView style={{flex:1, backgroundColor: theme.color1.val}}>
-      <YStack>
-        <XStack>
-          <Text>최근 게시글</Text>
-        </XStack>
-      </YStack>
+      <XStack style={{backgroundColor: theme.color1.val, height:50, alignItems:'center'}}>
+        {themeMode === 'dark' ? 
+          (<Image style={styles.logoImage} source={require('@/assets/images/logo/connect-logo-white-nonbg.png')}/> ) 
+          : (<Image style={styles.logoImage} source={require('@/assets/images/logo/connect-logo-black-nonbg.png')}/> )
+        }
+      </XStack>
+      {/* 본문 */}
+      <ScrollView style={{padding: 10}}>
+        
+        <YStack>
+          <Text style={[styles.titleStyle, {color: theme.color12.val}]}>오늘 할 일</Text>
+        </YStack>
+
+        <YStack>
+          <Text style={[styles.titleStyle, {color: theme.color12.val}]}>인기 글</Text>
+          <YStack style={{flex:1}}>
+            {popularPosts?.map((post) => (
+              <TouchableOpacity onPress={() => router.push(`/(main)/(modals)/posts/${post.category}/${post.postId}`)} key={post.postId} style={[styles.postContainer, {backgroundColor: theme.color3.val}]}>
+                <XStack style={{flex:1, justifyContent:'space-between'}}>
+
+                  <YStack style={{flex:1, justifyContent:'space-between'}}>
+                    <View>
+                      <Text style={styles.postTitle}>{post.title}</Text>
+                      <Text style={styles.postContent}>{post.content.length > 20 ? post.content.slice(0,20)+ '...' : post.content}</Text>
+                    </View>
+                    <View>
+                      <Text style={[styles.postCreatedAt, {color: theme.color10.val}]}>{format(post.createdAt, 'yyyy/MM/dd HH:mm')}</Text>
+                    </View>
+                  </YStack>
+
+                  <YStack style={{justifyContent:'space-between', width:70, alignItems:'flex-end'}}>
+                    <View style={[styles.categoryContainer, {backgroundColor: theme.color6.val}]}>
+                      <Text style={{fontSize: 13,color: 'white'}}>{majorTitleMap[post.category]}</Text>
+                    </View>
+                    <XStack>
+                      <XStack style={{justifyContent:'center', alignItems:'center'}}>
+                        <ThumbsUp color={'$accent1'} size={'$1'} marginEnd={2} /> 
+                        <Text style={{fontSize:16, color:theme.color12.val}}>{post.likeCount}</Text>
+                      </XStack>
+                    </XStack>
+                  </YStack>
+                </XStack>
+              </TouchableOpacity>
+            ))}
+          </YStack>
+        </YStack>
+
+        <YStack>
+          <Text style={[styles.titleStyle, {color: theme.color12.val}]}>새로운 채팅방</Text>
+          <YStack>
+          </YStack>
+        </YStack>
+
+      </ScrollView>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  logoImage: {
+    width:60,
+    height:50
+  },
+  titleStyle: {
+    padding:6,
+    fontSize: 20, 
+    fontWeight:'500'
+  },
+  postContainer: {
+    height:90,
+    borderRadius: 10,
+    marginBottom:10,
+    padding:10, 
+    justifyContent: 'space-between'
+  },
+  postTitle: {
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  postContent: {
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  postCreatedAt: {
+    fontSize: 10,
+  },
+  categoryContainer: {
+    width: 60,
+    height:20,
+    alignItems:'center',
+    justifyContent: 'center',
+    borderRadius:9,
+  }
+})

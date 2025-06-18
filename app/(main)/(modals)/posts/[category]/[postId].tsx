@@ -5,7 +5,7 @@ import { PostDropDownMenu } from '@/components/PostDropDownMenu';
 import { addComment, deleteComment, getComments, getLikePostCount, isPostLiked, likePost, unlikePost } from '@/firebase/posts';
 import { getDetailPost } from '@/firebase/posts';
 import { useAuth } from '@/hooks/useAuth';
-import { getCommentProps, postProps } from '@/type/firebaseType';
+import { getCommentProps, getPostProps } from '@/type/postType';
 import { AppWindowMac, Bookmark, MessageCircle, Send, ThumbsUp, X } from '@tamagui/lucide-icons';
 import { format } from 'date-fns';
 import { useLocalSearchParams } from 'expo-router';
@@ -28,7 +28,7 @@ import CustomAlert from '@/components/CutsomAlert';
 export default function detail() {
 const theme = useTheme();
 const { category, postId } = useLocalSearchParams<{category: string, postId: string}>(); // 현재 전공과 게시글 아이디 값
-const [postDetail, setPostDetail] = useState<postProps | null>(null); //게시글 상세 정보
+const [postDetail, setPostDetail] = useState<getPostProps>(); //게시글 상세 정보
 const [comment, setComment] = useState<string>(''); // 전송할 댓글 데이터  
 const {user} = useAuth(); // asyncStroage에 저장된 로그인 정보
 const userUID = user?.uid as string;
@@ -63,8 +63,7 @@ useEffect(() => {
     setPostDetail(post);
     setPostImage(post.imageURLs);
     // console.log("가져온 이미지:", post.imageURLs);
-    console.log("가져온 게시물 데이터 : ", post);
-
+    // console.log("가져온 게시물 데이터 : ", post);
   }
   fetchPost();
 }, [category, postId]);
@@ -132,7 +131,6 @@ const handleLike = async () => {
   const updateCount = await getLikePostCount(postId);
   setIsLiked(updateLiked);
   setLikeCount(updateCount);
-
 }
 
 return (

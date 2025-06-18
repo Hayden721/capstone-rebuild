@@ -1,6 +1,6 @@
 import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { chatUserCheckProps, enterChatroomProps, sendMessageProps } from '@/type/chatType';
+import { chatUserCheckProps, enterChatroomProps, getChatroomProps, sendMessageProps } from '@/type/chatType';
 
 // 채팅보내기
 // export const sendMessage = async ({chatroomId, message}:{chatroomId:string, message: IMessage}) => {
@@ -28,11 +28,7 @@ import { chatUserCheckProps, enterChatroomProps, sendMessageProps } from '@/type
 // 	await addDoc(messageRef, messageData)
 // }
 
-// 채팅 전송
-/**
- * 채팅 전송
- * @param param0 - chatroomId: 채팅방 id, giftedMessage: 채팅 메시지 데이터
- */
+
 // export const sendMessage = async({chatroomId, giftedMessage}:sendMessageProps ) => {
 // 	const image = giftedMessage.image;
 // 	const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
@@ -247,4 +243,22 @@ export const getChatroomSubscribeUser = async(chatroomId: string) => {
 	} catch(e) {
 		console.error("chatrooms users 배열 데이터 가져오기 실패 : ", e);
 	}
+}
+
+// 새로운 채팅방 조회 
+export const getNewChatrooms = async (): Promise<getChatroomProps[]> => {
+	const chatroomRef = collection(db, "chatrooms");
+	const q = query(chatroomRef, orderBy('createdAt', 'desc'));
+	const chatroomSnap = await getDocs(q);
+
+	return chatroomSnap.docs.map((doc)=> {
+		const data = doc.data();
+		return {
+			chatroomId: doc.id,
+			...data,
+			createdAt: data.createdAt.toDate(),
+		} as getChatroomProps
+	})
+
+	
 }

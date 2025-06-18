@@ -8,8 +8,8 @@ import { useRouter } from "expo-router";
 
 type DropDownMenuProps = {
   postId: string;
-  postUserUID: string|undefined;
-  userUID: string|null|undefined;
+  postUserUID: string|undefined; // firestore에 저장된 userUid
+  userUID: string|null|undefined; // 현재 로그인된 user의 uid
   category: string;
 }
 // 게시글 상세 스크린 헤더 버튼 (글 삭제, 글 신고)
@@ -31,7 +31,6 @@ export const PostDropDownMenu = ({postId, postUserUID, userUID, category}: DropD
     setMenuVisible(false);
     
     router.replace(`/(main)/(modals)/posts/${category}`);
-
   }
   // 게시글 신고 함수
   const handleReportPost = () => {
@@ -65,7 +64,7 @@ export const PostDropDownMenu = ({postId, postUserUID, userUID, category}: DropD
             {userUID === postUserUID && (
               <TouchableOpacity style={styles.menuItem} onPress={handleDeletePost}>
                 <View style={styles.menuTitle}>
-                  <Trash2 size={20} marginRight={8}/>
+                  <Trash2 size={20} marginEnd={8}/>
                   <Text style={{color: theme.color12?.val}}>글 삭제</Text>
                 </View>
               </TouchableOpacity>
@@ -74,7 +73,7 @@ export const PostDropDownMenu = ({postId, postUserUID, userUID, category}: DropD
             {userUID !== postUserUID && (
               <TouchableOpacity style={styles.menuItem} onPress={handleReportPost}>
                 <View style={styles.menuTitle}>
-                  <Siren size={20} marginRight={8}/>
+                  <Siren size={20} marginEnd={8}/>
                   <Text style={{color: theme.color12?.val}}>신고</Text>
                 </View>
               </TouchableOpacity>
