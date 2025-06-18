@@ -11,6 +11,21 @@ export interface postProps {
   email: string; // 유저 이메일
   photoURL: string; // 유저 프로필 사진
 }
+
+// 게시글 조회 타입
+export interface postProps1 {
+  id:string;
+  title: string; // 게시글 제목 
+  content: string; // 게시글 내용
+  imageURLs: string[]; // 게시글 이미지 
+  category: string; // 게시글의 카테고리
+  userUID: string; // 유저 uid
+  createdAt: Date; //게시글 생성일 
+  email: string; // 유저 이메일
+  photoURL: string; // 유저 프로필 사진
+  likeCount: string; // 좋아요 수
+}
+
 // 게시글 업로드 타입
 export interface addPostProps {
   title: string; // 제목

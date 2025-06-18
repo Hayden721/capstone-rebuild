@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Modal, TouchableOpacity, Text, StyleSheet, Dimensions, Pressable, Platform } from 'react-native';
+import { View, Modal, TouchableOpacity, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import { Button, useTheme, Popover, YStack} from "tamagui";
 import { EllipsisVertical, Siren, Trash2 } from '@tamagui/lucide-icons';
 import { deletePost } from "@/firebase/posts";
@@ -65,7 +65,7 @@ export const PostDropDownMenu = ({postId, postUserUID, userUID, category}: DropD
             {userUID === postUserUID && (
               <TouchableOpacity style={styles.menuItem} onPress={handleDeletePost}>
                 <View style={styles.menuTitle}>
-                  <Trash2 size={20} marginRight={8}/>
+                  <Trash2 size={20} style={{marginRight:8}}/>
                   <Text style={{color: theme.color12?.val}}>글 삭제</Text>
                 </View>
               </TouchableOpacity>
@@ -74,7 +74,7 @@ export const PostDropDownMenu = ({postId, postUserUID, userUID, category}: DropD
             {userUID !== postUserUID && (
               <TouchableOpacity style={styles.menuItem} onPress={handleReportPost}>
                 <View style={styles.menuTitle}>
-                  <Siren size={20} marginRight={8}/>
+                  <Siren size={20} style={{marginRight:8}}/>
                   <Text style={{color: theme.color12?.val}}>신고</Text>
                 </View>
               </TouchableOpacity>

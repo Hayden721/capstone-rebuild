@@ -5,9 +5,10 @@ import {
 	where,
 	setDoc,
 	deleteDoc,
+	increment,
   } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { addCommentProps, addPostProps } from '@/type/firebaseType';
+import { addCommentProps, addPostProps, postProps1 } from '@/type/firebaseType';
 
 let lastVisible: QueryDocumentSnapshot<DocumentData> | null = null;
 
@@ -190,17 +191,27 @@ export const deleteComment = async(postId: string, commentId: string) => {
 //게시글 좋아요 기능
 export const likePost = async (postId:string, userUID:string) => {
 	const likeRef = doc(db, "posts", postId, "likes", userUID);
+	const postRef = doc(db, "posts", postId);
 	// setDoc: 문서가 있으면 덮어쓰고 없으면 새로 생성한다. 또 문서ID를 직정 정해서 사용하는 경우 사용한다.
 	await setDoc(likeRef, {
 		likedAt: Timestamp.now(),
 	})
+	// posts 문서에 likeCount에 +1을 한다.
+	await updateDoc(postRef, {
+		likeCount: increment(1),
+	});
 }
 
 //게시글 좋아요 취소 기능
 export const unlikePost = async (postId:string, userUID:string) => {
 	const likeRef = doc(db, "posts", postId, "likes", userUID);
+	const postRef = doc(db, "posts", postId);
 	// likes에서 userUID에 해당하는 문서를 삭제한다.
 	await deleteDoc(likeRef);
+	await updateDoc(postRef, {
+		likeCount: increment(-1),
+	})
+
 }
 
 // 좋아요 눌렀는지 확인
@@ -218,4 +229,18 @@ export const getLikePostCount = async(postId:string): Promise<number> => {
 
 	return likesSnap.size;
 
+}
+
+//인기 글 조회(3개)
+export const getPopularPosts = async(): Promise<postProps1[]> => {
+	const popularRef = collection(db, "posts");
+	const q = query(
+		popularRef, 
+		orderBy('likeCount', 'desc'),
+		limit(3)
+	);
+	const popularSnap = await getDocs(q);
+	return popularSnap.docs.map(
+		doc => ({ id:doc.id, ...doc.data() } as postProps1)
+	);
 }

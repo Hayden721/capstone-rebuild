@@ -130,7 +130,7 @@ const handleUpdateProfileImage = async () => {
 					<YStack>
 						<H6>기타</H6>
 						<TouchableOpacity onPress={()=>setLogoutVisible(true)} style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>로그아웃</Text></TouchableOpacity>
-						<TouchableOpacity onPress={() => setDeleteAccountVisible(true) } style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>회원탈퇴</Text></TouchableOpacity>
+						<TouchableOpacity onPress={() => setDeleteAccountVisible(true) } style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15, color:'red'}}>회원탈퇴</Text></TouchableOpacity>
 					</YStack>
 					<Divider/>
 				</ScrollView>
