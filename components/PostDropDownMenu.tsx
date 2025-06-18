@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Modal, TouchableOpacity, Text, StyleSheet, Dimensions, Pressable, Platform } from 'react-native';
+import { View, Modal, TouchableOpacity, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import { Button, useTheme, Popover, YStack} from "tamagui";
 import { EllipsisVertical, Siren, Trash2 } from '@tamagui/lucide-icons';
 import { deletePost } from "@/firebase/posts";

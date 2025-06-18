@@ -80,33 +80,33 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
     }, [loaded, loading]);
   
     // 마운트 완료 후에만 경로 리디렉션 실행
-    useEffect(() => {
-      if (__DEV__ && isLayoutMounted) {
-        // 안전한 시점에서 리디렉션
-        const redirectTimer = setTimeout(() => {
-          // if (pathname !== '/my/changePassword') {
-          //   router.replace('/my/changePassword');
-          // }
+    // useEffect(() => {
+    //   if (__DEV__ && isLayoutMounted) {
+    //     // 안전한 시점에서 리디렉션
+    //     const redirectTimer = setTimeout(() => {
+    //       // if (pathname !== '/my/changePassword') {
+    //       //   router.replace('/my/changePassword');
+    //       // }
 
-          // if(pathname !== '/chat/9K80RQakI7AKYw4Jdy88/chatroom') {
-          //   router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');
-          // }
+    //       // if(pathname !== '/chat/9K80RQakI7AKYw4Jdy88/chatroom') {
+    //       //   router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');
+    //       // }
 
-          // if(pathname !== '/chat/QNxk13JIXP4SfQJvYeBj/preview') {
-          //   router.replace('/chat/QNxk13JIXP4SfQJvYeBj/preview');
-          // }
+    //       // if(pathname !== '/chat/QNxk13JIXP4SfQJvYeBj/preview') {
+    //       //   router.replace('/chat/QNxk13JIXP4SfQJvYeBj/preview');
+    //       // }
           
 
-          // if(pathname !== '/chat/fOxIMEV1BzYPpyCxGJWz/preview') {
-          //   router.replace('/chat/fOxIMEV1BzYPpyCxGJWz/preview');
-          // }
+    //       // if(pathname !== '/chat/fOxIMEV1BzYPpyCxGJWz/preview') {
+    //       //   router.replace('/chat/fOxIMEV1BzYPpyCxGJWz/preview');
+    //       // }
 
-          console.log("현재 경로 : ", pathname);
-        }, 100);
+    //       console.log("현재 경로 : ", pathname);
+    //     }, 100);
         
-        return () => clearTimeout(redirectTimer);
-      }
-    }, [pathname, isLayoutMounted]);
+    //     return () => clearTimeout(redirectTimer);
+    //   }
+    // }, [pathname, isLayoutMounted]);
 
   // 배포할 때 사용 
   // useEffect(() => {

@@ -23,6 +23,7 @@ export default function home() {
   const [popularPosts, setPopularPosts] = useState<getPostProps[]>([]); // 인기글
   const [newChatroom, setNewChatroom] = useState<getChatroomProps[]>([]); // 새로운 채팅방
   
+  
   useEffect(()=> {
     const popularPosts = async() => {
       const posts = await getPopularPosts();

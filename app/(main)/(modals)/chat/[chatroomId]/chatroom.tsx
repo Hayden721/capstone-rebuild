@@ -1,7 +1,7 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, View, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Pressable, StyleSheet, Dimensions, FlatList, Alert } from "react-native";
+import { KeyboardAvoidingView, Platform, View, Keyboard, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, useTheme, XStack, YStack } from "tamagui";
 import { fetchChatUserInCache, sendMessage, subscribeToMessages } from "@/firebase/chat";
