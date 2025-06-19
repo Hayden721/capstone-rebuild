@@ -39,7 +39,6 @@ const handleChatroomAccess = async (item: any) => {
   } else {
     router.push(`/(main)/(modals)/chat/${item.id}/preview`)
   }
-
 }
 
 

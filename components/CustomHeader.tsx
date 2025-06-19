@@ -17,13 +17,13 @@ export const CustomHeader = ({title, showBackButton = true, children}: CustomHea
 
   return (
     <XStack style={[styles.header]}>
-      <XStack style={{flex: 1, justifyContent:'flex-start'}} > 
+      <XStack style={[styles.headerItem,{justifyContent:'flex-start'}]} > 
         {showBackButton && <BackScreenButton/>}
       </XStack>
-      <XStack style={{flex:1, justifyContent: 'center'}}>
+      <XStack style={[styles.headerItem, {justifyContent: 'center'}]}>
         {title && <Text fontSize={16}>{title}</Text>}
       </XStack>
-      <XStack style={{flex:1, justifyContent: 'flex-end'}}>
+      <XStack style={[styles.headerItem,{justifyContent: 'flex-end'}]}>
         {children}    
       </XStack>
     </XStack>
@@ -34,6 +34,13 @@ const styles = StyleSheet.create({
   header: {
     height: Platform.OS === 'ios' ? 40 : 50,
     alignItems: 'center',
+    paddingRight:7,
+    paddingLeft:7,
+  },
+  headerItem: {
+    flex:1,
+    height: Platform.OS === 'ios' ? 40 : 50,
+    alignItems:'center',
   }
   
 })

@@ -2,8 +2,7 @@ import CustomAlert from "@/components/CutsomAlert";
 import { addUserToChatroom, enterUserToChatroom } from "@/firebase/chat";
 import { getChatroomInfo } from "@/firebase/firestore";
 import { useAuth } from "@/hooks/useAuth";
-import { getChatroomProps } from "@/type/firebaseType";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { getChatroomProps } from "@/type/chatType";
 import { X } from "@tamagui/lucide-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -11,7 +10,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text, useTheme, YStack } from "tamagui";
-
 
 export default function ChatPreview() {
 	const {chatroomId} = useLocalSearchParams<{chatroomId: string}>();
@@ -23,10 +21,7 @@ export default function ChatPreview() {
 	const [chatroomInfo, setChatroomInfo] = useState<getChatroomProps|null>(null);
 	const [enterAlert, setEnterAlert] = useState(false);
 
-
-	
-	// 채팅방 정보 
-	
+	// 채팅방 정보 	
 	useEffect(() => {
 		const chatroomInfo = async () => {
 			//chatrooms/{chatroomId}에서 admin, title, explain, users(length)
@@ -62,11 +57,6 @@ export default function ChatPreview() {
 		}
 	}
 
-
-
-
-
-  
 	return (
 		<SafeAreaView style={{flex:1, backgroundColor:theme.color1.val, paddingLeft:10, paddingRight:10}}>
 			<View>

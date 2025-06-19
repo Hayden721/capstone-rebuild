@@ -1,4 +1,4 @@
-import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
+import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { chatUserCheckProps, enterChatroomProps, getChatroomProps, sendMessageProps } from '@/type/chatType';
 
@@ -169,7 +169,6 @@ export const enterUserToChatroom = async (chatroomId: string, userUID: string) =
 	}
 }
 
-// 
 /**
  * 채팅방 구독 유저 확인
  * @param param0 - chatroomId: 채팅방id, userUid: 유저uid
@@ -248,7 +247,7 @@ export const getChatroomSubscribeUser = async(chatroomId: string) => {
 // 새로운 채팅방 조회 
 export const getNewChatrooms = async (): Promise<getChatroomProps[]> => {
 	const chatroomRef = collection(db, "chatrooms");
-	const q = query(chatroomRef, orderBy('createdAt', 'desc'));
+	const q = query(chatroomRef, orderBy('createdAt', 'desc'), limit(3));
 	const chatroomSnap = await getDocs(q);
 
 	return chatroomSnap.docs.map((doc)=> {
@@ -258,7 +257,5 @@ export const getNewChatrooms = async (): Promise<getChatroomProps[]> => {
 			...data,
 			createdAt: data.createdAt.toDate(),
 		} as getChatroomProps
-	})
-
-	
+	})	
 }

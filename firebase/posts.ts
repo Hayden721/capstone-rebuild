@@ -15,7 +15,7 @@ import { addCommentProps, addPostProps, getPostProps } from '@/type/postType';
 let lastVisible: QueryDocumentSnapshot<DocumentData> | null = null;
 
 // 게시글 조회
-export const fetchPosts = async (category: string, reset: boolean=false, pageSize: number = 10) => {
+export const fetchPosts = async (category: string, reset: boolean=false, pageSize: number = 10): Promise<getPostProps[]> => {
 	try {
 		const q = query(
     collection(db, "posts"),
@@ -32,15 +32,19 @@ export const fetchPosts = async (category: string, reset: boolean=false, pageSiz
     lastVisible = docs[docs.length - 1];
   }
 
-  const posts = docs.map(doc => {
+  const posts:getPostProps[] = docs.map(doc => {
     const data = doc.data();
     return {
-      id: doc.id, // 게시물 id
-      title: data.title, // 제목
-      content: data.content, // 내용
-			category: data.category, // 카테고리
-			userUID: data.userUID, // 유저 uid
-      imageURLs: data.imageURLs?.[0] || null, // imageURL
+        postId: doc.id, // 게시물 id
+        title: data.title, // 제목
+        content: data.content, // 내용
+        category: data.category, // 카테고리
+        userUID: data.userUID, // 유저 uid
+        imageURLs: data.imageURLs || [], // imageURL 배열로 반환
+        createdAt: data.createdAt?.toDate() || new Date(), // Firestore Timestamp를 Date로 변환
+        email: data.email || '', // 유저 이메일
+        photoURL: data.photoURL || '', // 유저 프로필 사진
+        likeCount: data.likeCount || '0', // 좋아요 수
     };
   });
   console.log("map에 있는 docs : ", posts);
@@ -48,6 +52,7 @@ export const fetchPosts = async (category: string, reset: boolean=false, pageSiz
 
 	}catch(e) {
 		console.error("파이어베이스 게시글 조회 실패 : ", e);
+		return [];
 	}
   
 }
@@ -66,6 +71,7 @@ export const uploadPostToFirestore = async({title, content, imageURLs, category,
     email, // email
     category,
     createdAt: Timestamp.now(), // 작성일
+		likeCount:0,
   })
   return docRef.id; // 업로드한 게시글의 id 값
 }

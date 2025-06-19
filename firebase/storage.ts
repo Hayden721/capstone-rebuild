@@ -3,7 +3,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, storage } from '../firebase';
 
 // 게시글 이미지 업로드
-export const uploadImageAsync = async (uri: string, major: string): Promise<string> => {
+export const uploadImageAsync = async (uri: string, category: string): Promise<string> => {
   const response = await fetch(uri);
   const blob = await response.blob();
   const extension = uri.slice(uri.lastIndexOf('.'));
@@ -11,7 +11,7 @@ export const uploadImageAsync = async (uri: string, major: string): Promise<stri
   const filename = `${Date.now()}_${Math.random().toString(36).substring(7)}${extension}`;
   const userEmail = auth.currentUser?.email;
 
-  const imageRef = ref(storage, `posts/${major}/${userEmail}/${filename}`);
+  const imageRef = ref(storage, `posts/${category}/${userEmail}/${filename}`);
   await uploadBytes(imageRef, blob);
   return await getDownloadURL(imageRef);
 };

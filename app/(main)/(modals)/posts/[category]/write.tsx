@@ -15,6 +15,7 @@ import { uploadPostToFirestore } from '@/firebase/posts';
 import { useAuth } from '@/hooks/useAuth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CustomHeader } from '@/components/CustomHeader';
+import CustomAlert from '@/components/CutsomAlert';
 
 export default function write() {
 const theme = useTheme();
@@ -24,7 +25,8 @@ const [title, setTitle] = useState(''); // 제목
 const [content, setContent] = useState(''); // 컨텐츠
 const [imageUris, setImageUris] = useState<string[]>([]);
 const { category } = useLocalSearchParams<{category: string}>(); // 현재 게시판 종류
-
+const [submitVisible, setSubmitVisible] = useState<boolean>(false);
+const submitBtnDisabled = !(title && content);
 //이미지 피커 사용 
 const handleImagePicker = async() => {
   const result = await pickImage({maxImages: 5, currentUris: imageUris});
@@ -65,6 +67,7 @@ const handleSubmit = async () => {
       userUID: userUID, // 유저 uid
       email: email, // 유저 email
       category: category, // 카테고리
+      likeCount: 0,
     });
     // 게시글 작성을 완료하면 내가 작성한 게시글로 이동
     router.replace(`/(main)/(modals)/posts/${category}/${newPostId}`);
@@ -73,26 +76,9 @@ const handleSubmit = async () => {
     console.error("게시글 등록 에러:", err);
     Alert.alert("오류", err.message || "알 수 없는 오류가 발생했습니다.");
   }
-
-  
 };
 
-const confirmSubmit = () => {
-  Alert.alert(
-    "등록",
-    "게시글을 등록하시겠습니까?",
-    [
-      {
-        text: "취소",
-        style: "cancel"
-      },
-      {
-        text: "등록",
-        onPress: handleSubmit
-      }
-    ]
-  )
-}
+
 
   return (
     
@@ -178,7 +164,6 @@ const confirmSubmit = () => {
             </TouchableWithoutFeedback>
           ))}
         </ScrollView>
-        
         </View>
 
         {/* 키보드 위 버튼 */}
@@ -190,14 +175,25 @@ const confirmSubmit = () => {
           <TouchableOpacity onPress={handleImagePicker} style={{ marginLeft: 10 }}>
             <Camera size="$2" color={'$color12'} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={confirmSubmit} style={{ marginRight: 10 }}>
-            <Text fontSize="$5" fontWeight={600}>완료</Text>
+          <TouchableOpacity onPress={()=> setSubmitVisible(true)} style={{ marginRight: 10 }} disabled={submitBtnDisabled}>
+            <Text fontSize="$5" fontWeight={600} style={{color:submitBtnDisabled ? 'gray': theme.color12.val}} >완료</Text>
           </TouchableOpacity>
         </View>
       </View>
     </TouchableWithoutFeedback>
   </KeyboardAvoidingView>
   
+  <CustomAlert 
+      visible={submitVisible} 
+      title={'게시글'} 
+      message={'게시글을 등록하시겠어요?'} 
+      onConfirm={handleSubmit} 
+      onCancel={() => setSubmitVisible(false)} 
+      confirmText={'확인'} 
+      cancelText={'취소'} 
+      confirmColor={theme.color12.val} 
+      cancelColor={'red'}
+    />
 </SafeAreaView>
 
   );

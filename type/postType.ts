@@ -10,9 +10,8 @@ export interface getPostProps {
   createdAt: Date; //게시글 생성일 
   email: string; // 유저 이메일
   photoURL: string; // 유저 프로필 사진
-  likeCount: string; // 좋아요 수
+  likeCount: number; // 좋아요 수
 }
-
 
 // 게시글 업로드 타입
 export interface addPostProps {
@@ -22,6 +21,7 @@ export interface addPostProps {
   category: string; // 카테고리
   userUID: string; // 작성한 유저 uid
   email: string; // 유저의 email
+  likeCount: number;
 }
 
 // 댓글 추가 타입

@@ -304,9 +304,7 @@ return (
         </TouchableWithoutFeedback>
       </SafeAreaView>
     </KeyboardAvoidingView>
-  
-);
-  
+  );
 }
 
 const styles = StyleSheet.create({

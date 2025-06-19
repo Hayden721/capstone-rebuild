@@ -1,4 +1,4 @@
-const majorTitleMap: Record<string, string> = {
+const titleMap: Record<string, string> = {
   free: '자유',
   info: '정보',
   com: '컴퓨터공학과',
@@ -12,4 +12,4 @@ const majorTitleMap: Record<string, string> = {
   soc: '사회학과',
 };
 
-export default majorTitleMap;
+export default titleMap;

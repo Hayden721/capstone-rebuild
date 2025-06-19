@@ -1,18 +1,14 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, Pressable, Image, RefreshControl, ActivityIndicator } from 'react-native';
-import { 
-  YStack, XStack, Text, Card, Button, 
-  Separator, Label, RadioGroup, Paragraph, 
-  Theme, AnimatePresence, styled, View, 
-  useTheme, Spinner} from 'tamagui';
+import { FlatList, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
+import { YStack, Text, View, useTheme, Spinner} from 'tamagui';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import PostAddButton from '@/components/PostAddButton';
 import { fetchPosts, resetPagination } from '@/firebase/posts';
 import { CustomHeader } from '@/components/CustomHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getPostProps } from '@/type/postType';
-import majorTitleMap from '@/constants/majorTitleMap';
-
+import titleMap from '@/constants/titleMap';
+import {Image} from 'expo-image';
 
 // 게시판 리스트
 export default function PostsDetail() {
@@ -66,7 +62,7 @@ useFocusEffect(
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: theme.color1.val}}>
-      <CustomHeader showBackButton={true} title={majorTitleMap[category]}>
+      <CustomHeader showBackButton={true} title={titleMap[category]}>
 
       </CustomHeader>
 
@@ -77,12 +73,12 @@ useFocusEffect(
       ):(
         <FlatList
           data={postList}
-          keyExtractor={(item)=> item.id}
+          keyExtractor={(item)=> item.postId}
           contentContainerStyle={{flexGrow: 1, minHeight: '100%'}}
           alwaysBounceVertical={true}
           renderItem={({item}) => (
             <View borderBottomWidth={0.5} borderColor={"#999"} > 
-              <TouchableOpacity onPress={() => router.push(`./${category}/${item.id}`)}>
+              <TouchableOpacity onPress={() => router.push(`./${category}/${item.postId}`)}>
                 <View style={{padding:10, borderColor:'beige', flexDirection:'row', justifyContent:'space-between'}}>
                   <View style={{height:50}}>
                     <Text fontSize={19}>{item.title}</Text>
