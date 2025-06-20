@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { YStack, XStack, Text, useTheme, Checkbox} from 'tamagui';
-import { router, useRouter } from 'expo-router';
+import { router, useFocusEffect, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeContext } from '@/hooks/useThemeContext';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getPopularPosts } from '@/firebase/posts';
 import { getPostProps } from '@/type/postType';
 import { getChatroomProps } from '@/type/chatType';
@@ -13,7 +13,7 @@ import { Check, List, ListCheck, Plus, ThumbsUp } from '@tamagui/lucide-icons';
 import titleMap from '@/constants/titleMap';
 import { checkChatroomSubscribeUser, getNewChatrooms } from '@/firebase/chat';
 import { useAuth } from '@/hooks/useAuth';
-import { getTodayTodo } from '@/firebase/todo';
+import { getTodayTodo, updateTodo } from '@/firebase/todo';
 import { getTodoProps } from '@/type/todoType';
 // 홈 화면
 export default function home() {
@@ -35,24 +35,62 @@ export default function home() {
     popularPosts();
   },[])
 
-  useEffect(() => {
-    const newChatrooms = async () => {
+  useFocusEffect(
+    useCallback(() => {
+      const popularPosts = async() => {
+      const posts = await getPopularPosts();
+      setPopularPosts(posts);
+      console.log("인기글 : ",posts)
+    }
+    popularPosts();
+    }, [])
+  )
+
+  // useEffect(() => {
+  //   const newChatrooms = async () => {
+  //     const chatrooms = await getNewChatrooms();
+  //     setNewChatroom(chatrooms);
+  //     console.log("chatrooms : ", chatrooms);
+  //   }
+  //   newChatrooms();
+  // }, [])
+  
+  useFocusEffect(
+    useCallback(()=> {
+      const newChatrooms = async () => {
       const chatrooms = await getNewChatrooms();
       setNewChatroom(chatrooms);
       console.log("chatrooms : ", chatrooms);
     }
     newChatrooms();
-  }, [])
-  useEffect(()=> {
-    const fetchTodo = async () => {
+    },[])
+  )
+
+  // useEffect(()=> {
+  //   const fetchTodo = async () => {
+  //     if(!user?.uid) {
+  //       return;
+  //     }
+  //     const todo = await getTodayTodo(user?.uid);
+  //     console.log("오늘 todo : ", todo);
+  //     setTodos(todo);
+  //   }
+  //   fetchTodo();
+  // }, [])
+
+  useFocusEffect(
+    useCallback(()=> {
+      const fetchTodo = async () => {
       if(!user?.uid) {
         return;
       }
       const todo = await getTodayTodo(user?.uid);
+      console.log("오늘 todo : ", todo);
       setTodos(todo);
     }
     fetchTodo();
-  }, [])
+    }, [user?.uid])
+  );
   const handleChatroomAccess = async (item: any) => {
     if(!user?.uid) return;
     // 1. firestore /chatrooms/{chatroomId}/users에 내 email과 같은 아이디 있으면 true 반환
@@ -65,6 +103,15 @@ export default function home() {
     }
   }
   
+  const handleTodoUpdate = async(todoId: string, currentState: boolean) => {
+    if(!user?.uid) {
+      return;
+    }
+    await updateTodo(user.uid, todoId, !currentState)
+    const updatedTodos = await getTodayTodo(user.uid);
+    setTodos(updatedTodos);
+  }
+
   return (
     <SafeAreaView style={{flex:1, backgroundColor: theme.color1.val}}>
       <XStack style={{backgroundColor: theme.color1.val, height:50, alignItems:'center', paddingRight:10, paddingLeft:10}}>
@@ -82,12 +129,12 @@ export default function home() {
             <ScrollView style={{flex:1}} nestedScrollEnabled={true}>
             {todos.map((todo)=> (
               <XStack key={todo.todoId} style={{alignItems: 'center', marginBottom:6}}>
-                <Checkbox size="$6" style={{backgroundColor: theme.accent9.val, marginRight:4}} checked={todo.isComplete} onCheckedChange={() => {console.log("checked!")}}>
+                <Checkbox size="$6" style={{backgroundColor: theme.accent9.val, marginRight:4}} checked={todo.isComplete} onCheckedChange={() => {handleTodoUpdate(todo.todoId, todo.isComplete)}}>
                   <Checkbox.Indicator style={{backgroundColor: theme.accent9.val}} >
                     <Check color={'$color12'}/>
                   </Checkbox.Indicator>
                 </Checkbox>
-                <Text style={{fontSize: 17, color: 'white'}}>{todo.content}</Text>
+                <Text style={{fontSize: 17, color: todo.isComplete ? '#aaa':'white', textDecorationLine: todo.isComplete ? 'line-through':'none'}}>{todo.content}</Text>
               </XStack>
             ))}
               

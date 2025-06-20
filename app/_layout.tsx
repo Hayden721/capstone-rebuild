@@ -64,7 +64,7 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
     // 배경 색상 변경
     NavigationBar.setBackgroundColorAsync(themeMode === 'dark' ? 'hsla(0, 7%, 1%, 1)' : 'hsla(0, 7%, 97%, 1)' ); // 검정색으로 설정
     // 아이콘 스타일 설정 (light | dark)
-    NavigationBar.setButtonStyleAsync(themeMode === 'dark' ? 'light' : 'dark'); // ✅
+    NavigationBar.setButtonStyleAsync(themeMode === 'dark' ? 'light' : 'dark');
   }, [themeMode]);
   
 
@@ -160,6 +160,7 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
             <Stack.Screen name="(auth)"/> 
             <Stack.Screen name="(main)"/>  
             <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> 
+
           </Stack>
           
         </TamaguiProvider>

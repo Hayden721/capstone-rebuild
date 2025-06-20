@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomAlert from "@/components/CutsomAlert";
 
+
 export default function My() {
 	const theme = useTheme();
 	const router = useRouter();
@@ -131,6 +132,9 @@ const handleUpdateProfileImage = async () => {
 						<H6>기타</H6>
 						<TouchableOpacity onPress={()=>setLogoutVisible(true)} style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15}}>로그아웃</Text></TouchableOpacity>
 						<TouchableOpacity onPress={() => setDeleteAccountVisible(true) } style={{paddingTop:8, paddingBottom:8}}><Text style={{fontSize:15, color:'red'}}>회원탈퇴</Text></TouchableOpacity>
+						
+						
+						
 					</YStack>
 					<Divider/>
 				</ScrollView>
@@ -145,6 +149,7 @@ const handleUpdateProfileImage = async () => {
 					onConfirm={() => handlelogout}
 					onCancel={() => {
 						setLogoutVisible(false);
+
 				}}/>
 
 				<CustomAlert visible={deleteAccountVisible} 
@@ -157,7 +162,6 @@ const handleUpdateProfileImage = async () => {
 					onConfirm={() => handleDeleteAccount}
 					onCancel={() => {
 						setDeleteAccountVisible(false)
-						
 				}}/>
 
 			</SafeAreaView>

@@ -1,16 +1,23 @@
-import React, { useEffect } from 'react';
-import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, StatusBar, Platform} from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Dimensions, View, StyleSheet, Text, TouchableOpacity, Modal ,StatusBar, Platform} from 'react-native';
 import { useTheme } from 'tamagui';
 // import Modal from 'react-native-modal';
 import { customAlertProps } from '../type/Types';
-
+import * as NavigationBar from 'expo-navigation-bar';
 import { useThemeContext } from '@/hooks/useThemeContext';
 const CustomAlert = ({visible, title, message, onConfirm, onCancel, confirmText, cancelText, confirmColor, cancelColor}: customAlertProps) => {
 	const theme = useTheme();
   const { themeMode } = useThemeContext();
   
+    useEffect(() => {
+      // 배경 색상 변경
+      NavigationBar.setBackgroundColorAsync(themeMode === 'dark' ? 'hsla(0, 7%, 1%, 1)' : 'hsla(0, 7%, 97%, 1)' ); // 검정색으로 설정
+      // 아이콘 스타일 설정 (light | dark)
+      NavigationBar.setButtonStyleAsync(themeMode === 'dark' ? 'light' : 'dark');
+    }, [themeMode]);
+
 	return (
-		<Modal transparent visible={visible} animationType='fade' onRequestClose={onCancel} statusBarTranslucent >
+		<Modal transparent visible={visible} animationType='fade' onRequestClose={onCancel} statusBarTranslucent>
 			<View style={styles.overlay}>
 				<View style={[styles.alertBox, {backgroundColor: theme.color4.val}]}>
 					{title ? <Text style={[styles.title, {color:theme.color12.val}]}>{title}</Text> : null}
