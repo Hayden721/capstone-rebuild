@@ -9,8 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/logo/connect-splash-1080x1920.png",
-      "resizeMode": "contain",
+      "image": "./assets/images/logo/connect-splash-android.png",
+      "resizeMode": "cover",
       "backgroundColor": "#000000"
     },
     "ios": {
@@ -19,6 +19,11 @@
     },
     "android": {
       "softwareKeyboardLayoutMode": "resize",
+      "splash":{
+        "image": "./assets/images/logo/connect-splash-android.png",
+        "resizeMode":"cover",
+        "backgroundColor":"#000000"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo/connect-icon.png",
         "backgroundColor": "#000000"
