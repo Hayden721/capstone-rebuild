@@ -4,14 +4,14 @@
     "slug": "capstone-rebuild",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo/connect-logo-black.png",
+    "icon": "./assets/images/logo/connect-icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/logo/connect-logo-black.png",
+      "image": "./assets/images/logo/connect-splash-1080x1920.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": true,
@@ -20,8 +20,8 @@
     "android": {
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/logo/connect-icon.png",
+        "backgroundColor": "#000000"
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
