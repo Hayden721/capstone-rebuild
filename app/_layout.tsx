@@ -69,51 +69,51 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   
 
   // 개발할 떄만 사용 (스크린 고정할 때 사용)
-  const [isLayoutMounted, setIsLayoutMounted] = useState(false);
-    // 컴포넌트 마운트 완료 감지
-    useEffect(() => {
-      if (loaded && !loading) {
-        SplashScreen.hideAsync(); // 모든 준비 끝난 후 Splash 숨김
-        // 마운트 완료 표시를 약간 지연
-        return setIsLayoutMounted(true);
-      }
-    }, [loaded, loading]);
+  // const [isLayoutMounted, setIsLayoutMounted] = useState(false);
+  //   // 컴포넌트 마운트 완료 감지
+  //   useEffect(() => {
+  //     if (loaded && !loading) {
+  //       SplashScreen.hideAsync(); // 모든 준비 끝난 후 Splash 숨김
+  //       // 마운트 완료 표시를 약간 지연
+  //       return setIsLayoutMounted(true);
+  //     }
+  //   }, [loaded, loading]);
   
-    // 마운트 완료 후에만 경로 리디렉션 실행
-    useEffect(() => {
-      if (__DEV__ && isLayoutMounted) {
-    //     // 안전한 시점에서 리디렉션
-        const redirectTimer = setTimeout(() => {
-          // if (pathname !== '/todo') {
-          //   router.replace('/todo');
-          // }
+  //   // 마운트 완료 후에만 경로 리디렉션 실행
+  //   useEffect(() => {
+  //     if (__DEV__ && isLayoutMounted) {
+  //   //     // 안전한 시점에서 리디렉션
+  //       const redirectTimer = setTimeout(() => {
+  //         // if (pathname !== '/chat/chatListTest') {
+  //         //   router.replace('/chat/chatListTest');
+  //         // }
 
-    //       // if(pathname !== '/chat/9K80RQakI7AKYw4Jdy88/chatroom') {
-    //       //   router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');
-    //       // }
+  //   //       // if(pathname !== '/chat/9K80RQakI7AKYw4Jdy88/chatroom') {
+  //   //       //   router.replace('/chat/9K80RQakI7AKYw4Jdy88/chatroom');
+  //   //       // }
 
-    //       // if(pathname !== '/chat/QNxk13JIXP4SfQJvYeBj/preview') {
-    //       //   router.replace('/chat/QNxk13JIXP4SfQJvYeBj/preview');
-    //       // }
+  //   //       // if(pathname !== '/chat/QNxk13JIXP4SfQJvYeBj/preview') {
+  //   //       //   router.replace('/chat/QNxk13JIXP4SfQJvYeBj/preview');
+  //   //       // }
           
 
-    //       // if(pathname !== '/chat/fOxIMEV1BzYPpyCxGJWz/preview') {
-    //       //   router.replace('/chat/fOxIMEV1BzYPpyCxGJWz/preview');
-    //       // }
+  //   //       // if(pathname !== '/chat/fOxIMEV1BzYPpyCxGJWz/preview') {
+  //   //       //   router.replace('/chat/fOxIMEV1BzYPpyCxGJWz/preview');
+  //   //       // }
 
-          console.log("현재 경로 : ", pathname);
-        }, 100);
+  //         console.log("현재 경로 : ", pathname);
+  //       }, 100);
         
-        return () => clearTimeout(redirectTimer);
-      }
-    }, [pathname, isLayoutMounted]);
+  //       return () => clearTimeout(redirectTimer);
+  //     }
+  //   }, [pathname, isLayoutMounted]);
 
   // 배포할 때 사용 
-  // useEffect(() => {
-  //   if (loaded && !loading) {
-  //     SplashScreen.hideAsync(); // 모든 준비 끝난 후 Splash 숨김
-  //   }
-  // }, [loaded, loading]);
+  useEffect(() => {
+    if (loaded && !loading) {
+      SplashScreen.hideAsync(); // 모든 준비 끝난 후 Splash 숨김
+    }
+  }, [loaded, loading]);
 
   useEffect(() => {
     
@@ -139,31 +139,22 @@ function RootLayoutNav({ loaded }: { loaded: boolean }) {
   if (loading || !loaded) return null; // 로딩이 되지 않았으면 렌더링 하지 않는다.
 
   return (
-    
-      
-      
+    <TamaguiProvider config={tamaguiConfig} defaultTheme={themeMode}>    
+      <StatusBar
+        barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}
+        translucent={true}
+        backgroundColor={themeMode === 'light' ? 'hsla(0, 7%, 97%, 1)' : 'hsla(0, 7%, 1%, 1)' }
+      />
 
-        <TamaguiProvider config={tamaguiConfig} defaultTheme={themeMode}>
-          
-          <StatusBar
-            barStyle={themeMode === 'light' ? 'dark-content' : 'light-content'}
-            translucent={true}
-            backgroundColor={themeMode === 'light' ? 'hsla(0, 7%, 97%, 1)' : 'hsla(0, 7%, 1%, 1)' }
-          />
-          
-
-          <Stack screenOptions={{ 
-            headerShown: false,
-            animation: 'default',
-            }}
-          >
-            <Stack.Screen name="(auth)"/> 
-            <Stack.Screen name="(main)"/>  
-            <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> 
-
-          </Stack>
-          
-        </TamaguiProvider>
+      <Stack screenOptions={{ 
+        headerShown: false,
+        animation: 'default',
+        }}>
+        <Stack.Screen name="(auth)"/> 
+        <Stack.Screen name="(main)"/>  
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> 
+      </Stack>
+    </TamaguiProvider>
         
       
   )

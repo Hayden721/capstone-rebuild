@@ -92,7 +92,7 @@ useFocusEffect(
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.1}
           ListFooterComponent={loadingMore ? <Spinner size="large" color={theme.accent1?.val}/> : null}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={theme.accent12?.val}/>}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={theme.accent12.val}/>}
         />
       )}
       {/* TODO: 고정된 게시글 추가 버튼 */}

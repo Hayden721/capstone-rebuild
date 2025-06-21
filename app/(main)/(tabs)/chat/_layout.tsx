@@ -14,6 +14,10 @@ export default function ChatLayout() {
 			<Stack.Screen 
 				name="index"
 			/>
+			
+			<Stack.Screen 
+				name="chatListTest"
+			/>
 
 		</Stack>
 	)

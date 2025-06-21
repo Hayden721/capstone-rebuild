@@ -12,7 +12,7 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, YStack, Text, XStack, Checkbox } from "tamagui";
 
-export default function todoList () {
+export default function TodoList () {
 	const theme = useTheme();
 	const {user} = useAuth();
 	const [todos, setTodos] = useState<Record<string, getTodoProps[]>>({});

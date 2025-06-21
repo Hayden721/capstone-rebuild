@@ -1,4 +1,4 @@
-import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
+import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, Timestamp, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { chatUserCheckProps, enterChatroomProps, getChatroomProps, sendMessageProps } from '@/type/chatType';
 
@@ -28,7 +28,6 @@ import { chatUserCheckProps, enterChatroomProps, getChatroomProps, sendMessagePr
 // 	await addDoc(messageRef, messageData)
 // }
 
-
 // export const sendMessage = async({chatroomId, giftedMessage}:sendMessageProps ) => {
 // 	const image = giftedMessage.image;
 // 	const messageRef = collection(db, 'chatrooms', chatroomId, 'messages');
@@ -47,6 +46,41 @@ import { chatUserCheckProps, enterChatroomProps, getChatroomProps, sendMessagePr
 
 // 	await addDoc(messageRef, chatData);
 // }
+
+// 채팅방 리스트 조회 (무한 스크롤 적용)
+export const getChatroomInfiniteScroll = async (
+	roomSize: number=10, 
+	lastDoc: QueryDocumentSnapshot | null = null // 
+) => {
+	try{
+		const chatroomRef = collection(db, 'chatrooms');
+		// lastDoc이 있으면, 해당 문서의 다음부터 roomSize만큼 가져오고, lastDoc이 없으면 roomSize만큼 가져온다.
+		const scrollQuery = lastDoc 
+			? query(chatroomRef, orderBy('createdAt', 'desc'), startAfter(lastDoc), limit(roomSize))
+			: query(chatroomRef, orderBy('createdAt', 'desc'), limit(roomSize));
+
+		const chatroomSnap = await getDocs(scrollQuery); // scrollQuery에 따라 데이터 조회
+		
+		const rooms = chatroomSnap.docs.map(doc => {
+			const roomData = doc.data();
+			return {
+				chatroomId: doc.id,
+				title: roomData.title,
+				explain: roomData.explain, 
+				imageURL: roomData.imageURL,
+				createdAt: roomData.createdAt,
+				users: roomData.users,
+				admin: roomData.admin,
+			};
+		});
+		// 조회한 값의 배열에 -1을 통해 마지막 문서를 newLastDoc에 저장 
+		const newLastDoc = chatroomSnap.docs[chatroomSnap.docs.length - 1] || null;
+		console.log("newLastDoc 확인 : ", newLastDoc);
+		return {rooms, lastDoc: newLastDoc};
+	} catch(e) {
+		console.error("채팅방 조회 실패 : ", e);
+	}
+}
 
 // 채팅방 참여 유저 캐시에 넣어서 사용
 export const fetchChatUserInCache = async (chatroomId: string) => {

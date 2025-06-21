@@ -4,12 +4,12 @@
     "slug": "capstone-rebuild",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo/connect-logo-black.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/splash-icon.png",
+      "image": "./assets/images/logo/connect-logo-black.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

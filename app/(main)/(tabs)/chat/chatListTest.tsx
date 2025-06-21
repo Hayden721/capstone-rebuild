@@ -59,15 +59,14 @@ useFocusEffect(
 
 
 
-const handleChatroomAccess = async (chatroomId: string) => {
+const handleChatroomAccess = async (item: any) => {
   if(!user?.uid) return;
   // 1. firestore /chatrooms/{chatroomId}/users에 내 email과 같은 아이디 있으면 true 반환
-  const checkUser = await checkChatroomSubscribeUser({chatroomId: chatroomId, userUid: user.uid})
-  
+  const checkUser = await checkChatroomSubscribeUser({chatroomId: item.id, userUid: user.uid})
   if(checkUser) {
-    router.push(`/(main)/(modals)/chat/${chatroomId}/chatroom`)
+    router.push(`/(main)/(modals)/chat/${item.id}/chatroom`)
   } else {
-    router.push(`/(main)/(modals)/chat/${chatroomId}/preview`)
+    router.push(`/(main)/(modals)/chat/${item.id}/preview`)
   }
 }
 
@@ -82,7 +81,7 @@ const handleChatroomAccess = async (chatroomId: string) => {
 				data={chatroom}
 				keyExtractor={item => item.chatroomId}
 				renderItem={({item})=> (
-					<TouchableOpacity onPress={() => handleChatroomAccess(item.chatroomId)}>
+					<TouchableOpacity onPress={() => handleChatroomAccess(item)}>
             <Card p="$4" m="$2" borderRadius="$4" style={{backgroundColor: theme.color3.val}}>
               <XStack style={{justifyContent:'space-between'}}>
                 <YStack>
