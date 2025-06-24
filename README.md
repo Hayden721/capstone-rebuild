@@ -44,6 +44,9 @@
 - 구조 개선 (firestore 구조 정리, 코드 가독성 향상)
 - 기능 추가 (다크모드)
 - Async Storage 사용 및 UX 개선
+## 아키텍쳐 구조
+![프로젝트 구조](https://github.com/user-attachments/assets/203147f6-812c-490d-8c66-271d6e6b656e)
+
 
 ## Firestore 구조
 ![firestore 다이어그램](https://github.com/user-attachments/assets/a6da2ee1-299e-4d71-83be-ccde2d618fa5)
